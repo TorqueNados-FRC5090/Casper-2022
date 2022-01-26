@@ -8,11 +8,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+//import edu.wpi.first.wpilibj2.command.Command;
+//import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj.Compressor;
 
 import com.revrobotics.CANSparkMax;
@@ -22,17 +21,18 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Controller;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PWMSparkMax;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Talon;
-
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
+/**
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
-
-import edu.wpi.first.wpilibj.Spark;
+*/
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -50,12 +50,13 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.VictorSP;
+import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
+//import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.networktables.*;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 
 
@@ -86,10 +87,21 @@ public class Robot extends TimedRobot {
   private boolean equals;
   private int armIsMoving = 0;
   private CANSparkMax topMover;
-  private static final int  topMoverID = 5;
+  private static final int  topMoverID = 4;
   private int topIsMoving = 0;
+  
+  //temporary code for shooter testing  
+  private CANSparkMax m_shooterFlywheelTop;
+  private static final int shooterFlywheelTopID = 9;
+  private int shootingFlywheelTop = 0;
+  private CANSparkMax m_shooterFlywheelBottom;
+  private static final int shooterFlywheelBottomID = 5;
+  private int shootingFlywheelBottom = 0;
+  
+  //private MotorControllerGroup m_shooter;
+  int onOffValue = 0;
 
-  private DoubleSolenoid dubs = new DoubleSolenoid(0, 1);
+  private DoubleSolenoid dubs = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 /*
   private NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   private NetworkTableEntry tx = table.getEntry("tx");
@@ -123,9 +135,16 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
 
-    comp = new Compressor();
+    comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     xbox  = new XboxController(1);
+
+    m_shooterFlywheelTop = new CANSparkMax(shooterFlywheelTopID, MotorType.kBrushless);
+    m_shooterFlywheelTop.restoreFactoryDefaults();
+    m_shooterFlywheelBottom = new CANSparkMax(shooterFlywheelBottomID, MotorType.kBrushless);
+    m_shooterFlywheelBottom.restoreFactoryDefaults();
+    //MotorControllerGroup m_shooter = new MotorControllerGroup(m_shooterFlywheelBottom, m_shooterFlywheelTop);
+    m_shooterFlywheelBottom.setInverted(true);
 
     armMover = new CANSparkMax(armMoverID, MotorType.kBrushless);
     armMover.restoreFactoryDefaults();
@@ -137,19 +156,19 @@ public class Robot extends TimedRobot {
     m_leftFrontMotor.restoreFactoryDefaults();
     m_leftRearMotor = new CANSparkMax(leftRearDeviceID, MotorType.kBrushless);
     m_leftRearMotor.restoreFactoryDefaults();
-    SpeedControllerGroup m_left = new SpeedControllerGroup(m_leftFrontMotor, m_leftRearMotor);
+    MotorControllerGroup m_left = new MotorControllerGroup(m_leftFrontMotor, m_leftRearMotor);
 
     m_rightFrontMotor = new CANSparkMax(rightFrontDeviceID, MotorType.kBrushless);
     m_rightFrontMotor.restoreFactoryDefaults();
     m_rightRearMotor = new CANSparkMax(rightRearDeviceID, MotorType.kBrushless);
     m_rightRearMotor.restoreFactoryDefaults();
-    SpeedControllerGroup m_right = new SpeedControllerGroup(m_rightFrontMotor, m_rightRearMotor);
+    MotorControllerGroup m_right = new MotorControllerGroup(m_rightFrontMotor, m_rightRearMotor);
 
     m_myRobot = new DifferentialDrive(m_left, m_right);
 
     m_stick = new Joystick(0);
 
-    CameraServer.getInstance().startAutomaticCapture();
+    CameraServer.startAutomaticCapture();
 
    // m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     //    m_chooser.addOption("My Auto", kCustomAuto);
@@ -265,7 +284,7 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    comp.stop();
+    comp.disable();
 
   }
 
@@ -273,6 +292,27 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+  if (xbox.getAButtonPressed()) {
+
+    m_shooterFlywheelBottom.set(.62);
+    m_shooterFlywheelTop.set(.62);
+    shootingFlywheelTop = 69;
+    shootingFlywheelBottom = 69;
+
+  } else if (xbox.getAButtonReleased()) {
+
+    m_shooterFlywheelTop.set(0);
+    m_shooterFlywheelBottom.set(0);
+    shootingFlywheelTop = 0;
+    shootingFlywheelBottom = 0;
+
+  }
+
+    
+
+
+
+  /* this is commented out for testing shooter
   if (xbox.getAButton()) { 
 
     dubs.set(DoubleSolenoid.Value.kForward);
@@ -282,21 +322,21 @@ public class Robot extends TimedRobot {
     dubs.set(DoubleSolenoid.Value.kReverse);
 
   }
+*/
+  if (xbox.getLeftBumper()) {
 
-  if (xbox.getBumper(Hand.kLeft)) {
-
-    comp.start();
+    comp.enableDigital();
   
-  } else if(xbox.getBumper(Hand.kRight)) {
+  } else if(xbox.getRightBumper()) {
 
-    comp.stop();
+    comp.disable();
 
   }
 
 
-    m_myRobot.arcadeDrive(m_stick.getRawAxis(1), -m_stick.getRawAxis(0));
+    m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
 
-    //armMover.set(controller.getTriggerAxis(GenericHID.Hand.kLeft));
+    //armMover.set(controller.getLeftTriggerAxis());
 
     
 	if (xbox.getYButton() && armIsMoving == 0 ) { 
@@ -334,8 +374,8 @@ public class Robot extends TimedRobot {
     
     Update_Limelight_Tracking();
 
-    double steer = xbox.getX(Hand.kRight);
-    double drive = -xbox.getY(Hand.kLeft);
+    double steer = xbox.getRightX();
+    double drive = -xbox.getLeftY();
     boolean auto = xbox.getAButton();
 
     steer *= 0.70;
@@ -362,7 +402,7 @@ public class Robot extends TimedRobot {
      
     // The 5 lines above move a sparkmax named "SparkMotor" with the A button
 
-    // SparkMotor.set(controller.getTriggerAxis(GenericHID.Hand.kLeft));
+    // SparkMotor.set(controller.getLeftTriggerAxis());
     // The line above moves a sparkmax named "SparkMotor" with the left trigger
 
     // if(controller.getYButton()) {
