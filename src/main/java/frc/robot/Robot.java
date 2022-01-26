@@ -97,7 +97,8 @@ public class Robot extends TimedRobot {
   private CANSparkMax m_shooterFlywheelBottom;
   private static final int shooterFlywheelBottomID = 5;
   private int shootingFlywheelBottom = 0;
-  
+  private boolean shooterIsOn = false;
+
   //private MotorControllerGroup m_shooter;
   int onOffValue = 0;
 
@@ -292,6 +293,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
+  // Hold to shoot
+  /*
   if (xbox.getAButtonPressed()) {
 
     m_shooterFlywheelBottom.set(.62);
@@ -307,7 +310,7 @@ public class Robot extends TimedRobot {
     shootingFlywheelBottom = 0;
 
   }
-
+  */
     
 
 
