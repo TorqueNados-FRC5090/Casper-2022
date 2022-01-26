@@ -18,12 +18,11 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.Controller;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.motorcontrol.PWMSparkMax;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 /**
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -33,8 +32,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 */
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
-import edu.wpi.first.wpilibj.SpeedController;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -51,8 +49,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.XboxController;
+
 //import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.networktables.*;
@@ -192,11 +190,11 @@ public class Robot extends TimedRobot {
 
     //WPI_VictorSPX m_frontLeft = new WPI_VictorSPX(1);
     //WPI_VictorSPX m_rearLeft = new WPI_VictorSPX(2);
-    //SpeedControllerGroup m_left = new SpeedControllerGroup(m_frontLeft, m_rearLeft);
+    //motorcontrol.MotorControllerGroup m_left = new motorcontrol.MotorControllerGroup(m_frontLeft, m_rearLeft);
 
     //WPI_VictorSPX m_frontRight = new WPI_VictorSPX(3);
     //WPI_VictorSPX m_rearRight = new WPI_VictorSPX(4);
-    //SpeedControllerGroup m_right = new SpeedControllerGroup(m_frontRight, m_rearRight);
+    //motorcontrol.MotorControllerGroup m_right = new motorcontrol.MotorControllerGroup(m_frontRight, m_rearRight);
 
     //setM_drive(new DifferentialDrive(m_left, m_right));
     //setM_driveStick(new Joystick(1));
@@ -293,7 +291,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-  // Hold to shoot
+  // Hold A to shoot
   /*
   if (xbox.getAButtonPressed()) {
 
@@ -312,6 +310,21 @@ public class Robot extends TimedRobot {
   }
   */
     
+  // Press A to toggle the shooter 
+  if( xbox.getAButtonPressed() && shooterIsOn ) {
+    m_shooterFlywheelBottom.set(.62);
+    m_shooterFlywheelTop.set(.62);
+    shootingFlywheelTop = 69;
+    shootingFlywheelBottom = 69;
+    shooterIsOn = true;
+  }
+  else if( xbox.getAButtonPressed() && !shooterIsOn ) {
+    m_shooterFlywheelTop.set(0);
+    m_shooterFlywheelBottom.set(0);
+    shootingFlywheelTop = 0;
+    shootingFlywheelBottom = 0;
+    shooterIsOn = false;
+  }
 
 
 
