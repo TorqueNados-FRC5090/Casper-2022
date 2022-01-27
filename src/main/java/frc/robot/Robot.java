@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
   private CANSparkMax m_shooterFlywheelBottom;
   private static final int shooterFlywheelBottomID = 5;
   private int shootingFlywheelBottom = 0;
-  private boolean shooterIsOn = false;
+  private boolean shooterIsOn;
 
   //private MotorControllerGroup m_shooter;
   int onOffValue = 0;
@@ -144,6 +144,8 @@ public class Robot extends TimedRobot {
     m_shooterFlywheelBottom.restoreFactoryDefaults();
     //MotorControllerGroup m_shooter = new MotorControllerGroup(m_shooterFlywheelBottom, m_shooterFlywheelTop);
     m_shooterFlywheelBottom.setInverted(true);
+
+    shooterIsOn = false;
 
     armMover = new CANSparkMax(armMoverID, MotorType.kBrushless);
     armMover.restoreFactoryDefaults();
@@ -311,19 +313,21 @@ public class Robot extends TimedRobot {
   */
     
   // Press A to toggle the shooter 
-  if( xbox.getAButtonPressed() && shooterIsOn ) {
-    m_shooterFlywheelBottom.set(.62);
-    m_shooterFlywheelTop.set(.62);
-    shootingFlywheelTop = 69;
-    shootingFlywheelBottom = 69;
-    shooterIsOn = true;
-  }
-  else if( xbox.getAButtonPressed() && !shooterIsOn ) {
-    m_shooterFlywheelTop.set(0);
-    m_shooterFlywheelBottom.set(0);
-    shootingFlywheelTop = 0;
-    shootingFlywheelBottom = 0;
-    shooterIsOn = false;
+  if( xbox.getAButtonPressed() ) {
+    if( shooterIsOn ) {
+      m_shooterFlywheelTop.set(0);
+      m_shooterFlywheelBottom.set(0);
+      shootingFlywheelTop = 0;
+      shootingFlywheelBottom = 0;
+      shooterIsOn = false;
+    }
+    else {
+      m_shooterFlywheelBottom.set(.62);
+      m_shooterFlywheelTop.set(.62);
+      shootingFlywheelTop = 69;
+      shootingFlywheelBottom = 69;
+      shooterIsOn = true;
+    }
   }
 
 
