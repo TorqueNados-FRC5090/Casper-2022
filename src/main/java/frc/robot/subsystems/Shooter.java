@@ -7,27 +7,31 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // This object is used to control the shooter
 public class Shooter {
     // Declare all shooter variables 
-    private CANSparkMax m_shooterFlywheelTop;
-    private CANSparkMax m_shooterFlywheelBottom;
+    private CANSparkMax topMotor;
+    private CANSparkMax bottomMotor;
     private boolean shooterIsOn;
   
   // Constructor method initiallizes variables used
   public Shooter( int topID, int bottomID) {
     // Initiallize top motor
-    this.m_shooterFlywheelTop = new CANSparkMax(topID, MotorType.kBrushless);
-    this.m_shooterFlywheelTop.restoreFactoryDefaults();
+    this.topMotor = new CANSparkMax(topID, MotorType.kBrushless);
+    this.topMotor.restoreFactoryDefaults();
 
     // Initialize bottom motor
     // Bottom motor is inverted so that it will
     // always spin opposite to the top motor
-    this.m_shooterFlywheelBottom = new CANSparkMax(bottomID, MotorType.kBrushless);
-    this.m_shooterFlywheelBottom.restoreFactoryDefaults();
-    this.m_shooterFlywheelBottom.setInverted(true);
+    this.bottomMotor = new CANSparkMax(bottomID, MotorType.kBrushless);
+    this.bottomMotor.restoreFactoryDefaults();
+    this.bottomMotor.setInverted(true);
 
     // Shooter starts in the 'off' state
     this.shooterIsOn = false;
   }
 
+  // Returns true if the shooter is on
+  public boolean isOn() { return this.shooterIsOn; }
+
+  // Sets shooter to specified power
   // Power is locked to [-1, 1]
   public void setPower( double pwr ) {
 
@@ -36,8 +40,8 @@ public class Shooter {
     else if( pwr < -1 ) { pwr = -1; }
 
     // Set motors
-    m_shooterFlywheelTop.set(pwr);
-    m_shooterFlywheelBottom.set(pwr);
+    topMotor.set(pwr);
+    bottomMotor.set(pwr);
 
     // Update shooter state
     if( pwr == 0 ) { shooterIsOn = false; }
@@ -46,15 +50,15 @@ public class Shooter {
 
   // Sets shooter to full power
   public void fullTilt() {
-    m_shooterFlywheelTop.set(1);
-    m_shooterFlywheelBottom.set(1);
+    topMotor.set(1);
+    bottomMotor.set(1);
     shooterIsOn = true;
   }
 
   // Turns shooter off
   public void off(){
-    m_shooterFlywheelTop.set(0);
-    m_shooterFlywheelBottom.set(0);
+    topMotor.set(0);
+    bottomMotor.set(0);
     shooterIsOn = false;
   }
 
