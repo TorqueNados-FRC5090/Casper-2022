@@ -16,11 +16,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import edu.wpi.first.cameraserver.CameraServer;
 
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Drivetrain;
 
 
 
@@ -34,15 +34,7 @@ import frc.robot.subsystems.Shooter;
 public class Robot extends TimedRobot {
   
   private DifferentialDrive m_myRobot;
-  private Joystick m_stick;
-  private static final int leftFrontDeviceID = 7;
-  private static final int leftRearDeviceID = 6;
-  private static final int rightFrontDeviceID = 3;
-  private static final int rightRearDeviceID = 2;
-  private CANSparkMax m_leftFrontMotor;
-  private CANSparkMax m_leftRearMotor;
-  private CANSparkMax m_rightFrontMotor;
-  private CANSparkMax m_rightRearMotor;  
+  private Joystick m_stick; 
   private XboxController xbox;
   private static final int armMoverID = 8;
   private CANSparkMax armMover;
@@ -52,6 +44,7 @@ public class Robot extends TimedRobot {
   private static final int  topMoverID = 4;
   private int topIsMoving = 0;
   private Shooter shooter;
+  private Drivetrain drivetrain;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -70,19 +63,9 @@ public class Robot extends TimedRobot {
     topMover= new CANSparkMax(topMoverID, MotorType.kBrushless);
     topMover.restoreFactoryDefaults();
 
-    m_leftFrontMotor = new CANSparkMax(leftFrontDeviceID, MotorType.kBrushless);
-    m_leftFrontMotor.restoreFactoryDefaults();
-    m_leftRearMotor = new CANSparkMax(leftRearDeviceID, MotorType.kBrushless);
-    m_leftRearMotor.restoreFactoryDefaults();
-    MotorControllerGroup m_left = new MotorControllerGroup(m_leftFrontMotor, m_leftRearMotor);
-
-    m_rightFrontMotor = new CANSparkMax(rightFrontDeviceID, MotorType.kBrushless);
-    m_rightFrontMotor.restoreFactoryDefaults();
-    m_rightRearMotor = new CANSparkMax(rightRearDeviceID, MotorType.kBrushless);
-    m_rightRearMotor.restoreFactoryDefaults();
-    MotorControllerGroup m_right = new MotorControllerGroup(m_rightFrontMotor, m_rightRearMotor);
-
-    m_myRobot = new DifferentialDrive(m_left, m_right);
+    drivetrain = new Drivetrain(7, 3, 6, 2);
+    m_myRobot = new DifferentialDrive(
+      drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
 
     m_stick = new Joystick(0);
 
@@ -148,8 +131,19 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-  if (xbox.getAButton()) {
-    shooter.toggle();
+  // Uses 'RT' to toggle the shooter
+  /*
+  if (xbox.getRightTriggerAxis() > .9 ) {
+    shooter.toggle(.6);
+  }
+  */
+
+  // Uses 'RT' to set the shooter and 'B' to turn off
+  if (xbox.getRightTriggerAxis() > .02 ) {
+    shooter.setPower(xbox.getRightTriggerAxis());
+  }
+  if (xbox.getBButton()) { 
+    shooter.off(); 
   }
 
   if (xbox.getLeftBumper()) {
