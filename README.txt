@@ -4,4 +4,8 @@ All code was written for the 2022
 season - FIRST FORWARD presented by Qualcomm.
  
 -- Contributors --
-Dylan Lozon
+Alex
+Daniel
+Dylan
+Jonathon
+Natalee
