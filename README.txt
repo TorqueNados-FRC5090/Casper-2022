@@ -5,5 +5,7 @@ season - FIRST FORWARD presented by Qualcomm.
  
 -- Contributors --
 // Put your names here
+Alex
+Daniel
 Jonathon
 Natalee
