@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 
 import edu.wpi.first.cameraserver.CameraServer;
 
+import frc.robot.subsystems.Shooter;
 
 
 
@@ -50,16 +51,7 @@ public class Robot extends TimedRobot {
   private CANSparkMax topMover;
   private static final int  topMoverID = 4;
   private int topIsMoving = 0;
-  
-  //temporary code for shooter testing  
-  private CANSparkMax m_shooterFlywheelTop;
-  private static final int shooterFlywheelTopID = 9;
-  private CANSparkMax m_shooterFlywheelBottom;
-  private static final int shooterFlywheelBottomID = 5;
-  private boolean shooterIsOn;
-
-  //private MotorControllerGroup m_shooter;
-  int onOffValue = 0;
+  private Shooter shooter;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -71,14 +63,6 @@ public class Robot extends TimedRobot {
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     xbox  = new XboxController(1);
-
-    m_shooterFlywheelTop = new CANSparkMax(shooterFlywheelTopID, MotorType.kBrushless);
-    m_shooterFlywheelTop.restoreFactoryDefaults();
-    m_shooterFlywheelBottom = new CANSparkMax(shooterFlywheelBottomID, MotorType.kBrushless);
-    m_shooterFlywheelBottom.restoreFactoryDefaults();
-    m_shooterFlywheelBottom.setInverted(true);
-
-    shooterIsOn = false;
 
     armMover = new CANSparkMax(armMoverID, MotorType.kBrushless);
     armMover.restoreFactoryDefaults();
@@ -103,6 +87,7 @@ public class Robot extends TimedRobot {
     m_stick = new Joystick(0);
 
     CameraServer.startAutomaticCapture();
+    shooter = new Shooter(5, 9);
   }
 
   @Override
@@ -163,53 +148,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-  // Hold A to shoot
-  /*
-  if (xbox.getAButtonPressed()) {
-
-    m_shooterFlywheelBottom.set(.62);
-    m_shooterFlywheelTop.set(.62);
-    shootingFlywheelTop = 69;
-    shootingFlywheelBottom = 69;
-
-  } else if (xbox.getAButtonReleased()) {
-
-    m_shooterFlywheelTop.set(0);
-    m_shooterFlywheelBottom.set(0);
-    shootingFlywheelTop = 0;
-    shootingFlywheelBottom = 0;
-
+  if (xbox.getAButton()) {
+    shooter.toggle();
   }
-  */
-    
-  // Press A to toggle the shooter 
-  if( xbox.getAButtonPressed() ) {
-    if( shooterIsOn ) {
-      m_shooterFlywheelTop.set(0);
-      m_shooterFlywheelBottom.set(0);
-      shooterIsOn = false;
-    }
-    else {
-      m_shooterFlywheelBottom.set(.62);
-      m_shooterFlywheelTop.set(.62);
-      shooterIsOn = true;
-    }
-  }
-
-
-
-  /* this is commented out for testing shooter
-  if (xbox.getAButton()) { 
-
-    dubs.set(DoubleSolenoid.Value.kForward);
-
-  } else if (xbox.getBButton()) {
-
-    dubs.set(DoubleSolenoid.Value.kReverse);
-
-  }
-*/
-
 
   if (xbox.getLeftBumper()) {
 
