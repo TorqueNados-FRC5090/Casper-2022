@@ -44,10 +44,10 @@ public class Robot extends TimedRobot {
   private static final int armMoverID = 8;
   private CANSparkMax armMover;
   private Compressor comp;
-  private int armIsMoving = 0;
+  private boolean armIsMoving;
   private CANSparkMax topMover;
   private static final int  topMoverID = 4;
-  private int topIsMoving = 0;
+  private boolean topIsMoving;
 
   // Subsystem objects
   private Shooter shooter;
@@ -70,9 +70,11 @@ public class Robot extends TimedRobot {
 
     armMover = new CANSparkMax(armMoverID, MotorType.kBrushless);
     armMover.restoreFactoryDefaults();
+    armIsMoving = false;
     
     topMover= new CANSparkMax(topMoverID, MotorType.kBrushless);
     topMover.restoreFactoryDefaults();
+    topIsMoving = false;
 
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
@@ -169,27 +171,27 @@ public class Robot extends TimedRobot {
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
 
     
-	if (xbox.getYButton() && armIsMoving == 0 ) { 
+	if (xbox.getYButton() && !armIsMoving ) { 
 
       armMover.set(-1);
-      armIsMoving = 69;
+      armIsMoving = true;
   
     } else if (xbox.getYButton()) {
   
        armMover.set(0);
-       armIsMoving = 0;
+       armIsMoving = false;
       
     }
     
-  if (xbox.getXButton() && topIsMoving == 0 ) {
+  if (xbox.getXButton() && !topIsMoving ) {
 
       topMover.set(-1);
-      topIsMoving = 69;
+      topIsMoving = true;
 
     } else if (xbox.getXButton()) {
 
       topMover.set(0);
-      topIsMoving = 0;
+      topIsMoving = false;
     }
   }
 }
