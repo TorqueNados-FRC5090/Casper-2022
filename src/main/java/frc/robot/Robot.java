@@ -6,22 +6,26 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.TimedRobot;
+// Controller Imports
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.Joystick;
 
+// Actuation imports (Motors, Compressors, etc.)
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-
+// Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
 
+// Subsystem imports
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
 
+// Misc imports
+import edu.wpi.first.wpilibj.TimedRobot;
 
 
 /**
