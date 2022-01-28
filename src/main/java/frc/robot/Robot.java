@@ -36,10 +36,11 @@ import edu.wpi.first.wpilibj.TimedRobot;
  * project.
  */
 public class Robot extends TimedRobot {
-  
-  private DifferentialDrive m_myRobot;
+  // Controller ojects
   private Joystick m_stick; 
   private XboxController xbox;
+
+  // ??
   private static final int armMoverID = 8;
   private CANSparkMax armMover;
   private Compressor comp;
@@ -47,8 +48,13 @@ public class Robot extends TimedRobot {
   private CANSparkMax topMover;
   private static final int  topMoverID = 4;
   private int topIsMoving = 0;
+
+  // Subsystem objects
   private Shooter shooter;
   private Drivetrain drivetrain;
+
+  // Misc variables/objects
+  private DifferentialDrive m_myRobot;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -56,10 +62,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-
+    // Initialize variables
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     xbox  = new XboxController(1);
+    m_stick = new Joystick(0);
 
     armMover = new CANSparkMax(armMoverID, MotorType.kBrushless);
     armMover.restoreFactoryDefaults();
@@ -71,9 +78,8 @@ public class Robot extends TimedRobot {
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
 
-    m_stick = new Joystick(0);
-
     CameraServer.startAutomaticCapture();
+
     shooter = new Shooter(5, 9);
   }
 
