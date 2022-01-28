@@ -143,55 +143,51 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
 
-  // Uses 'RT' to toggle the shooter
-  /*
-  if (xbox.getRightTriggerAxis() > .9 ) {
-    shooter.toggle(.6);
-  }
-  */
+    // Uses 'RT' to toggle the shooter
+    /*
+    if (xbox.getRightTriggerAxis() > .9 ) {
+      shooter.toggle(.6);
+    }
+    */
 
-  // Uses 'RT' to set the shooter and 'B' to turn off
-  if (xbox.getRightTriggerAxis() > .02 ) {
-    shooter.setPower(xbox.getRightTriggerAxis());
-  }
-  if (xbox.getBButton()) { 
-    shooter.off(); 
-  }
+    // Uses 'RT' to set the shooter and 'B' to turn off
+    if (xbox.getRightTriggerAxis() > .02 ) {
+      shooter.setPower(xbox.getRightTriggerAxis());
+    }
+    if (xbox.getBButton()) { 
+      shooter.off(); 
+    }
 
-  if (xbox.getLeftBumper()) {
-
-    comp.enableDigital();
-  
-  } else if(xbox.getRightBumper()) {
-
-    comp.disable();
-
-  }
+    if (xbox.getLeftBumper()) {
+      comp.enableDigital();
+    }
+    if (xbox.getRightBumper()) {
+      comp.disable();
+    }
 
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
 
-    
-	if (xbox.getYButton() && !armIsMoving ) { 
-
-      armMover.set(-1);
-      armIsMoving = true;
-  
-    } else if (xbox.getYButton()) {
-  
-       armMover.set(0);
-       armIsMoving = false;
       
+    if (xbox.getYButton()) { 
+      if (armIsMoving) {
+        armMover.set(0);
+        armIsMoving = false;
+      }
+      else {
+        armMover.set(-1);
+        armIsMoving = true;
+      }
     }
-    
-  if (xbox.getXButton() && !topIsMoving ) {
-
-      topMover.set(-1);
-      topIsMoving = true;
-
-    } else if (xbox.getXButton()) {
-
-      topMover.set(0);
-      topIsMoving = false;
+      
+    if (xbox.getXButton()) { 
+      if (topIsMoving) {
+        topMover.set(0);
+        topIsMoving = false;
+      }
+      else {
+        topMover.set(-1);
+        topIsMoving = true;
+      }
     }
   }
 }
