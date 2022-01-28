@@ -142,32 +142,35 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    // Puts the robot in arcade drive
+    m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
 
-    // Uses 'RT' to toggle the shooter
+    // 'RT' toggles the shooter
     /*
     if (xbox.getRightTriggerAxis() > .9 ) {
       shooter.toggle(.6);
     }
     */
 
-    // Uses 'RT' to set the shooter and 'B' to turn off
+    // 'RT' sets the shooter power
     if (xbox.getRightTriggerAxis() > .02 ) {
       shooter.setPower(xbox.getRightTriggerAxis());
     }
+    // 'B' turns off the shooter
     if (xbox.getBButton()) { 
       shooter.off(); 
     }
 
+    // 'LB' turns the compressor on
     if (xbox.getLeftBumper()) {
       comp.enableDigital();
     }
+    // 'RB' turns the compressor off
     if (xbox.getRightBumper()) {
       comp.disable();
     }
-
-    m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
-
       
+    // 'Y' toggles the arm?
     if (xbox.getYButton()) { 
       if (armIsMoving) {
         armMover.set(0);
@@ -179,6 +182,7 @@ public class Robot extends TimedRobot {
       }
     }
       
+    // 'X' toggles something?
     if (xbox.getXButton()) { 
       if (topIsMoving) {
         topMover.set(0);
