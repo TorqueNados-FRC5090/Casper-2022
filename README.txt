@@ -9,3 +9,4 @@ Daniel
 Dylan Lozon
 Jonathon Houston
 Natalee Zatkoff
+Eli Goreta
