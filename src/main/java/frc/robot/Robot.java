@@ -23,6 +23,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 // Subsystem imports
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.ShuffBoard;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -52,6 +53,7 @@ public class Robot extends TimedRobot {
   // Subsystem objects
   private Shooter shooter;
   private Drivetrain drivetrain;
+  private ShuffBoard shuffle;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
@@ -83,6 +85,8 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
 
     shooter = new Shooter(5, 9);
+  
+    shuffle = new ShuffBoard();
   }
 
   @Override
@@ -193,5 +197,8 @@ public class Robot extends TimedRobot {
         topIsMoving = true;
       }
     }
+    //ShuffleBoard stuff
+    shuffle.printShooterRPM(shooter);
+ 
   }
 }

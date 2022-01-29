@@ -28,6 +28,14 @@ public class Shooter {
     this.shooterIsOn = false;
   }
 
+  // Accessor Methods (getters)
+  public CANSparkMax getTop() {
+    return this.topMotor;
+  }
+  public CANSparkMax getBottom() {
+    return this.bottomMotor;
+  }
+  
   // Returns true if the shooter is on
   public boolean isOn() { return this.shooterIsOn; }
 
