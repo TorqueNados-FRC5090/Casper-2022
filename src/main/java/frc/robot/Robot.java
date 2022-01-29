@@ -169,29 +169,5 @@ public class Robot extends TimedRobot {
     if (xbox.getRightBumper()) {
       comp.disable();
     }
-      
-    // 'Y' toggles the arm?
-    if (xbox.getYButton()) { 
-      if (armIsMoving) {
-        armMover.set(0);
-        armIsMoving = false;
-      }
-      else {
-        armMover.set(-1);
-        armIsMoving = true;
-      }
-    }
-      
-    // 'X' toggles something?
-    if (xbox.getXButton()) { 
-      if (topIsMoving) {
-        topMover.set(0);
-        topIsMoving = false;
-      }
-      else {
-        topMover.set(-1);
-        topIsMoving = true;
-      }
-    }
   }
 }
