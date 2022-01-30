@@ -21,6 +21,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 // Subsystem imports
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Dashboard;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -38,17 +39,14 @@ public class Robot extends TimedRobot {
   private Joystick m_stick; 
   private XboxController xbox;
 
-  // ??
-  
-  private Compressor comp;
-  
-
   // Subsystem objects
   private Shooter shooter;
   private Drivetrain drivetrain;
+  private Dashboard dashboard;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
+  private Compressor comp;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -62,8 +60,6 @@ public class Robot extends TimedRobot {
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
 
-    
-
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
@@ -71,6 +67,8 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
 
     shooter = new Shooter(5, 9);
+  
+    dashboard = new Dashboard();
   }
 
   @Override
@@ -157,5 +155,8 @@ public class Robot extends TimedRobot {
     if (xbox.getRightBumper()) {
       comp.disable();
     }
+      
+    // Update the SmartDashboard
+    dashboard.printShooterRPM(shooter);
   }
 }
