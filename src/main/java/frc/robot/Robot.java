@@ -13,8 +13,6 @@ import edu.wpi.first.wpilibj.Joystick;
 // Actuation imports (Motors, Compressors, etc.)
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
 // Camera imports
@@ -44,10 +42,11 @@ public class Robot extends TimedRobot {
   // Subsystem objects
   private Shooter shooter;
   private Drivetrain drivetrain;
-  private Dashboard shuffle;
+  private Dashboard dashboard;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
+  private Compressor comp;
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -61,14 +60,6 @@ public class Robot extends TimedRobot {
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
 
-    armMover = new CANSparkMax(armMoverID, MotorType.kBrushless);
-    armMover.restoreFactoryDefaults();
-    armIsMoving = false;
-    
-    topMover= new CANSparkMax(topMoverID, MotorType.kBrushless);
-    topMover.restoreFactoryDefaults();
-    topIsMoving = false;
-
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
@@ -77,7 +68,7 @@ public class Robot extends TimedRobot {
 
     shooter = new Shooter(5, 9);
   
-    shuffle = new Dashboard();
+    dashboard = new Dashboard();
   }
 
   @Override
@@ -165,8 +156,7 @@ public class Robot extends TimedRobot {
       comp.disable();
     }
       
-    //ShuffleBoard stuff
-    shuffle.printShooterRPM(shooter);
- 
+    // Update the SmartDashboard
+    dashboard.printShooterRPM(shooter);
   }
 }
