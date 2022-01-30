@@ -104,6 +104,7 @@ Temporary Items
 
 ### VisualStudioCode ###
 .vscode/*
+.vs/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
@@ -157,5 +158,10 @@ gradle-app.setting
 bin/
 imgui.ini
 
+# Files created by wpilib robot simulator 
+.wpilib/*
+simgui-ds.json
+simgui-window.json
+simgui.json
 
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
