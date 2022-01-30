@@ -6,6 +6,7 @@ season - FIRST FORWARD presented by Qualcomm.
 -- Contributors --
 Alex
 Daniel
-Dylan
-Jonathon
-Natalee
+Dylan Lozon
+Jonathon Houston
+Natalee Zatkoff
+Eli Goreta
