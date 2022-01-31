@@ -29,10 +29,10 @@ public class Shooter {
   }
 
   // Accessor Methods (getters)
-  public CANSparkMax getTop() {
+  public CANSparkMax getTopMotor() {
     return this.topMotor;
   }
-  public CANSparkMax getBottom() {
+  public CANSparkMax getBottomMotor() {
     return this.bottomMotor;
   }
   

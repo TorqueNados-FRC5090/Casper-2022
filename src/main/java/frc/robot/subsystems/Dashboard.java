@@ -8,10 +8,26 @@ public class Dashboard {
     // Constructor method
     public Dashboard() {}
 
-    // Prints the rpm of a shooter object
-    // Shooters have two motors, but we only need to print the RPM
-    // of one motor, because they're locked together physically on the robot
+    // Prints the rpm of a shooter object to a SmartDashboard
     public void printShooterRPM( Shooter shooter ) {
-        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getBottom().getEncoder().getVelocity()));
+            SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotor().getEncoder().getVelocity()));
+    }
+
+    /* Prints the rpm of a shooter object to a SmartDashboard
+     * Shooters have two motors, but we only need to print the RPM
+     * of one motor, because they're locked together physically on the robot
+     * However, when testing with only one motor, we want to make sure it 
+     * isn't just printing the RPM of the motor that's disconnected (0 RPM)
+     */
+    public void testShooterRPM( Shooter shooter ) {
+        // Make temporary variables to shorten code
+        double topRPM = Math.round(shooter.getTopMotor().getEncoder().getVelocity());
+        double bottomRPM = Math.round(shooter.getBottomMotor().getEncoder().getVelocity());
+
+        // Logic to insure that we can test with only one motor
+        if( topRPM == 0 && bottomRPM != 0 )
+            SmartDashboard.putNumber("ShooterRPM", bottomRPM);
+        else
+            SmartDashboard.putNumber("ShooterRPM", topRPM);
     }
 }
