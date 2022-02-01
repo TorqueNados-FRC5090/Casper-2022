@@ -15,6 +15,8 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
+import java.io.IOException;
+
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -22,6 +24,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Dashboard;
+import frc.robot.subsystems.Limelight;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -43,6 +46,7 @@ public class Robot extends TimedRobot {
   private Shooter shooter;
   private Drivetrain drivetrain;
   private Dashboard dashboard;
+  private Limelight limelight;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
@@ -65,6 +69,7 @@ public class Robot extends TimedRobot {
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
 
     CameraServer.startAutomaticCapture();
+    limelight = new Limelight();
 
     shooter = new Shooter(5, 9);
   
@@ -122,7 +127,13 @@ public class Robot extends TimedRobot {
     // }
 
     comp.disable();
-
+    try {
+      limelight.testData();
+      limelight.printData();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /** This function is called periodically during operator control. */
