@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Limelight {
     // Declare variables
@@ -14,7 +17,7 @@ public class Limelight {
 
     // Constructor
     public Limelight() {
-        table = new int[64][8];
+        table = new int[15][5];
     }
 
     // Fills the array with each square's index
@@ -52,4 +55,32 @@ public class Limelight {
         // Close the filewriter when it is done
         fileWriter.close();
     }
+    public void loadFromFile( String fileName )
+   {
+      try 
+      {
+         File file = new File(fileName);
+         Scanner scan = new Scanner(file);
+         scan.useDelimiter("/|\\n"); // uses "/" and new lines as delimiters
+         
+         while ( scan.hasNext() )
+         {
+            String dataType = scan.next().toUpperCase();
+            // When "PLAYER" is found in the file, create a player and try to insert it
+            if (dataType.equals("PLAYER"))
+            {
+               id = scan.nextDouble(); 
+               firstName = scan.next();
+               lastName = scan.next();
+               try { birthYear = scan.nextInt(); }
+               catch ( InputMismatchException e ) { birthYear = -1; }
+               country = scan.next();
+               
+               insertPlayer( id, firstName, lastName, birthYear, country );
+            }
+         }
+            scan.close();
+      }
+      catch ( FileNotFoundException e ) { System.out.println( "File was not found." ); }
+   }
 }
