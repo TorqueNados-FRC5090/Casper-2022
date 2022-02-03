@@ -4,20 +4,20 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Limelight {
     // Declare variables
     int[][] table;
-    double dist;
-    double power;
-    double rpm;
+    int dist;
+    int rpm;
     int hoodAngle;
     int rotation;
 
     // Constructor
     public Limelight() {
-        table = new int[15][5];
+        table = new int[15][4];
     }
 
     // Fills the array with each square's index
@@ -28,6 +28,13 @@ public class Limelight {
                 table[i][j] = i + (j * table.length);
     }
 
+
+
+
+
+    /*----------------------- File Handling -----------------------*/
+
+    // Prints the data from the limelight datatable into Limetable.txt
     public void printData() throws IOException {
         // Print everything to the Limetable file
         FileWriter fileWriter = new FileWriter("./src/main/java/frc/robot/subsystems/Limetable.txt");
@@ -44,8 +51,12 @@ public class Limelight {
                     content = "  " + table[i][j] + "  |";
                 else if( table[i][j] >= 10 && table[i][j] < 100 )
                     content = " " + table[i][j] + "  |";
-                else 
+                else if( table[i][j] >= 100 && table[i][j] < 1000 )
                     content = " " + table[i][j] + " |";
+                else if( table[i][j] >= 1000 && table[i][j] < 10000 )
+                    content = "" + table[i][j] + " |";
+                else 
+                    content = "" + table[i][j] + "|";
 
                 fileWriter.write(content);
             }
@@ -55,32 +66,33 @@ public class Limelight {
         // Close the filewriter when it is done
         fileWriter.close();
     }
+
+    // BUG - data all has to be on one line to be properly imported
+    // Input data from a file into the limelight datatable
     public void loadFromFile( String fileName )
-   {
-      try 
-      {
-         File file = new File(fileName);
-         Scanner scan = new Scanner(file);
-         scan.useDelimiter("/|\\n"); // uses "/" and new lines as delimiters
-         
-         while ( scan.hasNext() )
-         {
-            String dataType = scan.next().toUpperCase();
-            // When "PLAYER" is found in the file, create a player and try to insert it
-            if (dataType.equals("PLAYER"))
-            {
-               id = scan.nextDouble(); 
-               firstName = scan.next();
-               lastName = scan.next();
-               try { birthYear = scan.nextInt(); }
-               catch ( InputMismatchException e ) { birthYear = -1; }
-               country = scan.next();
-               
-               insertPlayer( id, firstName, lastName, birthYear, country );
+    {
+        try {
+            // Open file and scanner
+            File file = new File(fileName);
+            Scanner scan = new Scanner(file);
+            // Uses "/" and new lines as delimiters
+            scan.useDelimiter("/|\\n"); 
+            
+            // Adds data into the table until there is no more data to add
+            int i = 0;
+            while( scan.hasNext() ) {
+                try {
+                    table[i][0] = scan.nextInt(); 
+                    table[i][1] = scan.nextInt();
+                    table[i][2] = scan.nextInt();
+                    table[i][3] = scan.nextInt();
+                    i++;
+                }
+                catch ( InputMismatchException e ) { break; }
             }
-         }
+            // Close the scanner when it is done
             scan.close();
-      }
-      catch ( FileNotFoundException e ) { System.out.println( "File was not found." ); }
+        }
+        catch ( FileNotFoundException e ) { /*File does not exist*/ }
    }
 }

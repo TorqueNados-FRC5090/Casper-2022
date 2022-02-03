@@ -127,13 +127,12 @@ public class Robot extends TimedRobot {
     // }
 
     comp.disable();
+
+    // Print limelight test data
     try {
       limelight.testData();
       limelight.printData();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    } catch (IOException e) { e.printStackTrace(); }
   }
 
   /** This function is called periodically during operator control. */
