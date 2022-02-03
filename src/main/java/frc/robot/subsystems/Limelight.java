@@ -29,6 +29,33 @@ public class Limelight {
     }
 
 
+    // Finds the closest RPM that is needed to make a shot
+    // from a given disatnce from limelight.
+    public int getRPMFromDistance(int distance) {
+        // These integer values are set to -1 so that it will be obvious
+        // when a value outside of the array is called on
+        int lower = -1;
+        int higher = -1;
+        int i;
+        
+        // We use this for loop to find the value closest to the target distance
+        for( i = 0; i < table.length; i++) {
+            if( table[i][0] > distance ) {
+                lower = table[i][0];
+                higher = table[i-1][0];
+                break;
+            }
+        }
+        // Returns RPM based on which distance is closest
+        if (distance - lower >= higher - distance)
+            return(table [i][1]);
+        // Returns -1 if the distance is outside of the array
+        else
+            return(table [i - 1][1]);
+        
+    }
+
+
 
 
 
