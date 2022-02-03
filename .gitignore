@@ -164,4 +164,7 @@ simgui-ds.json
 simgui-window.json
 simgui.json
 
+# Custom files that code writes to
+Limetable.txt
+
 # End of https://www.gitignore.io/api/c++,java,linux,macos,gradle,windows,visualstudiocode
