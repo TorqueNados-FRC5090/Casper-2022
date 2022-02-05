@@ -7,8 +7,8 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // This object is used to control the shooter
 public class Shooter {
     // Declare all shooter variables 
-    private CANSparkMax topMotor;
-    private CANSparkMax bottomMotor;
+    private CANSparkMax topMotor; // CW
+    private CANSparkMax bottomMotor; // CCW
     private boolean shooterIsOn;
   
   // Constructor method initiallizes variables used
