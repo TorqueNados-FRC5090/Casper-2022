@@ -35,7 +35,13 @@ public class Shooter {
   public CANSparkMax getBottomMotor() {
     return this.bottomMotor;
   }
-  
+  public double getTopMotorRPM() {
+    return this.topMotor.getEncoder().getVelocity();
+  }
+  public double getBottomMotorRPM() {
+    return this.bottomMotor.getEncoder().getVelocity();
+  }
+
   // Returns true if the shooter is on
   public boolean isOn() { return this.shooterIsOn; }
 
@@ -55,6 +61,18 @@ public class Shooter {
     if( pwr == 0 ) { shooterIsOn = false; }
     else { shooterIsOn = true; }
   }
+
+  // Sets the rpm of the motor
+  public void setRPM(int RPM) {
+    if(getTopMotorRPM() < RPM) {
+      fullTilt(); 
+    }
+    else {
+      off() ;
+    }
+  }
+
+
 
   // Sets shooter to full power
   public void fullTilt() {
@@ -83,5 +101,14 @@ public class Shooter {
   public void toggle( double pwr ) {
     if( shooterIsOn ) { this.off(); }
     else { this.setPower(pwr); }
+  }
+
+
+  // If shooter is off, this will set it to
+  // the desired RPM
+  // If shooter is on, this will turn it off
+  public void toggle( int RPM ) {
+    if( shooterIsOn ) { this.off(); }
+    else { this.setRPM(RPM); }
   }
 }
