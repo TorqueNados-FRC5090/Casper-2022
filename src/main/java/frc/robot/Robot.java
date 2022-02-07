@@ -142,16 +142,18 @@ public class Robot extends TimedRobot {
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
 
     // 'RT' toggles the shooter
-    /*
-    if (xbox.getRightTriggerAxis() > .9 ) {
-      shooter.toggle(.6);
+    
+    if (xbox.getAButton()) {
+      shooter.toggle(6000);
     }
-    */
-
+    
+    /*
     // 'RT' sets the shooter power
     if (xbox.getRightTriggerAxis() > .02 ) {
       shooter.setPower(xbox.getRightTriggerAxis());
     }
+    */
+
     // 'B' turns off the shooter
     if (xbox.getBButton()) { 
       shooter.off(); 
