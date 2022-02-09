@@ -29,18 +29,10 @@ public class Shooter {
   }
 
   // Accessor Methods (getters)
-  public CANSparkMax getTopMotor() {
-    return this.topMotor;
-  }
-  public CANSparkMax getBottomMotor() {
-    return this.bottomMotor;
-  }
-  public double getTopMotorRPM() {
-    return this.topMotor.getEncoder().getVelocity();
-  }
-  public double getBottomMotorRPM() {
-    return this.bottomMotor.getEncoder().getVelocity();
-  }
+  public CANSparkMax getTopMotor() { return this.topMotor; }
+  public CANSparkMax getBottomMotor() { return this.bottomMotor; }
+  public double getTopMotorRPM() { return this.topMotor.getEncoder().getVelocity(); }
+  public double getBottomMotorRPM() { return this.bottomMotor.getEncoder().getVelocity(); }
 
   // Returns true if the shooter is on
   public boolean isOn() { return this.shooterIsOn; }
