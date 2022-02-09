@@ -33,19 +33,11 @@ public class Intake {
         }
     }
 
-    public void setMotor(int motorDirection){       
-        switch(motorDirection){
-            case 1:
-              motor.set(1);
-              break;
-            case -1:
-              motor.set(-1);
-              break;
-            case 0:
-              motor.set(0);
-              break;
-            default:
-              motor.set(0);
-          }
+    public void setMotor(double motorDirection){   
+      if(disableMotor == false){
+        motor.set(motorDirection);
+
+      }
     }
+
 }
