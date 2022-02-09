@@ -139,7 +139,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    m_myRobot.arcadeDrive(-m_stick.getRawAxis(1), m_stick.getRawAxis(0));
+    m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
 
     // 'RT' toggles the shooter
     
