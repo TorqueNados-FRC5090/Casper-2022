@@ -72,6 +72,7 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     shooter = new Shooter(5, 9);
+    shooter.setLock(true);
   
     dashboard = new Dashboard();
   }
@@ -142,7 +143,7 @@ public class Robot extends TimedRobot {
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
     
     // 'RT' sets the shooter power and locks at highest value
-    if (xbox.getRightTriggerAxis() > .02 ) {
+    if (xbox.getRightTriggerAxis() > 0 ) {
       shooter.setPower(xbox.getRightTriggerAxis());
     }
 
