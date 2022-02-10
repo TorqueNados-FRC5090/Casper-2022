@@ -140,19 +140,11 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
-
-    // 'RT' toggles the shooter
     
-    if (xbox.getAButton()) {
-      shooter.toggle(6000);
-    }
-    
-    /*
-    // 'RT' sets the shooter power
+    // 'RT' sets the shooter power and locks at highest value
     if (xbox.getRightTriggerAxis() > .02 ) {
       shooter.setPower(xbox.getRightTriggerAxis());
     }
-    */
 
     // 'B' turns off the shooter
     if (xbox.getBButton()) { 
