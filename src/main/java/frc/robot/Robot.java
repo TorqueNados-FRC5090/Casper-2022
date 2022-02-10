@@ -19,6 +19,7 @@ import java.io.IOException;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Timer;
 
 // Subsystem imports
 import frc.robot.subsystems.Shooter;
@@ -170,5 +171,10 @@ public class Robot extends TimedRobot {
       
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
+
+    //This is the method for the debounce. It is set to 0.2 seconds. 
+    //Timer.delay(0.2)
+
+
   }
 }
