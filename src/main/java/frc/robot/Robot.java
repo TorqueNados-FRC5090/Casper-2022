@@ -19,16 +19,17 @@ import java.io.IOException;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.Timer;
 
 // Subsystem imports
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
+import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.Limelight;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer; //This is the debounce library 
 
 
 /**
@@ -48,6 +49,7 @@ public class Robot extends TimedRobot {
   private Drivetrain drivetrain;
   private Dashboard dashboard;
   private Limelight limelight;
+  private Elevator elevator; 
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
@@ -75,6 +77,8 @@ public class Robot extends TimedRobot {
     shooter = new Shooter(5, 9);
   
     dashboard = new Dashboard();
+
+    elevator = new Elevator(12);
   }
 
   @Override
@@ -173,8 +177,14 @@ public class Robot extends TimedRobot {
     dashboard.printShooterRPM(shooter);
 
     //This is the method for the debounce. It is set to 0.2 seconds. 
-    //Timer.delay(0.2)
+    //Timer.delay(0.2)    Look at the definition of the method for more info. 
 
-
+    //
+    if(xbox.getXButton()){
+      elevator.on();
+    }else{
+      elevator.updateElevator();
+    }
+    
   }
 }
