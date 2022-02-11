@@ -11,7 +11,7 @@ public class Elevator {
     public AnalogInput sensor2; 
 
     private CANSparkMax motor; 
-
+//s
     boolean motorOn; 
     boolean aButtonNotPressed;
 
