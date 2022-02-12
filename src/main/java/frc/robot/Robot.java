@@ -176,10 +176,14 @@ public class Robot extends TimedRobot {
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
 
+
+
+    
     //This is the method for the debounce. It is set to 0.2 seconds. 
     //Timer.delay(0.2)    Look at the definition of the method for more info. 
 
-    //
+    //The X button is the shoot button now I guess. If x is not press,
+    // the sensor will check if there is a ball in the elevator 
     if(xbox.getXButton()){
       elevator.on();
     }else{
