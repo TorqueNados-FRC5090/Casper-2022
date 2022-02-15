@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj.RobotController;
 public class Elevator {
 
     //Sets up the sensors   
-    public final AnalogInput sensor1;
-    //public AnalogInput sensor2; 
+    public final AnalogInput bottomSensor;
+    public AnalogInput topSensor; 
 
     //Sets up the motor 
     private CANSparkMax motor; 
@@ -21,14 +21,20 @@ public class Elevator {
     //Holds on to the distance from the sensor
     double sensor1Distance;
 
+    boolean bottomSensorHasBall;
+    boolean topSensorHasBall;
+
     //Tells which motor & sensor we are going to use for the elevator  
     public Elevator(int motorID){
         motor = new CANSparkMax(motorID, MotorType.kBrushless);
-        sensor1 = new AnalogInput(0);
-        //sensor2 = new AnalogInput(2);
+        bottomSensor = new AnalogInput(0);
+        topSensor = new AnalogInput(2);
 
         motorOn = true;     
     }
+
+    public boolean topSensorHasBall() { return topSensorHasBall; }
+    public boolean bottomSensorHasBall() { return bottomSensorHasBall; }
 
     //Turns on the motor 
     public void on(){
@@ -64,19 +70,30 @@ public class Elevator {
     
     //This checks if the elevator has a ball in it or not 
     public void updateElevator(){
-        sensor1Distance = findDistanceCm(sensor1);
+        if(findDistanceCm(bottomSensor) < 35)
+            bottomSensorHasBall = true;
+        else
+            bottomSensorHasBall = false; 
 
-        if(sensor1Distance > 35){
+        if(findDistanceCm(topSensor) < 35)
+            topSensorHasBall = true;
+        else
+            topSensorHasBall = false; 
+        
+
+
+        if(bottomSensorHasBall == false && topSensorHasBall == false){
             on();
-
+        }else if(bottomSensorHasBall && topSensorHasBall == false){
+            off();
+            //Tell dashboard to prep
         }else {
             off();
-            //shootCheck();            
+            //Tell dashboard ready to fire
         }
-            
-
-
     }
+
+
 
 
 

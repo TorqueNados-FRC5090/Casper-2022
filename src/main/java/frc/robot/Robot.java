@@ -173,6 +173,18 @@ public class Robot extends TimedRobot {
       comp.disable();
     }
       
+
+
+
+
+    if(xbox.getXButton()){
+      elevator.on();
+    }else{
+      elevator.updateElevator();
+    }
+
+
+
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
 
@@ -184,11 +196,7 @@ public class Robot extends TimedRobot {
 
     //The X button is the shoot button now I guess. If x is not press,
     // the sensor will check if there is a ball in the elevator 
-    if(xbox.getXButton()){
-      elevator.on();
-    }else{
-      elevator.updateElevator();
-    }
+
     
   }
 }
