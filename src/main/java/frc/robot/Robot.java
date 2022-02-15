@@ -24,6 +24,7 @@ import edu.wpi.first.cameraserver.CameraServer;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.Limelight;
 
@@ -50,10 +51,12 @@ public class Robot extends TimedRobot {
   private Dashboard dashboard;
   private Limelight limelight;
   private Elevator elevator; 
+  private Intake intake;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
+  private double leftTrigger; 
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -79,6 +82,8 @@ public class Robot extends TimedRobot {
     dashboard = new Dashboard();
 
     elevator = new Elevator(12);
+    //Please change intake motor to the correct motor ID 
+    intake = new Intake(12);
   }
 
   @Override
@@ -173,14 +178,25 @@ public class Robot extends TimedRobot {
       comp.disable();
     }
       
-    // Update the SmartDashboard
-    dashboard.printShooterRPM(shooter);
-
 
 
     
     //This is the method for the debounce. It is set to 0.2 seconds. 
-    //Timer.delay(0.2)    Look at the definition of the method for more info. 
+    //Timer.delay(0.2)
+
+    //"Y" is to up the arms up and down + debounce 
+    if(xbox.getYButton()){
+      Timer.delay(0.2); //This is debounce 
+      intake.toggleArms();
+    }
+
+    //When pressing the left trigger, the intake motor will turn on based on the 
+    //amount of pressure applyed to the tigger. 
+    leftTrigger = xbox.getLeftTriggerAxis();
+    if(leftTrigger > 0){
+      intake.setMotor(leftTrigger);
+    }
+
 
     //The X button is the shoot button now I guess. If x is not press,
     // the sensor will check if there is a ball in the elevator 
@@ -190,5 +206,13 @@ public class Robot extends TimedRobot {
       elevator.updateElevator();
     }
     
+
+
+    // Update the SmartDashboard
+    dashboard.printShooterRPM(shooter);
+
+
+
+
   }
 }
