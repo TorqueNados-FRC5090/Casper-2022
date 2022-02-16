@@ -27,6 +27,7 @@ public class Shooter {
 
     // Shooter starts in the 'off' state
     this.shooterIsOn = false;
+    // Shooter is unlocked by default
     this.locked = false;
   }
 
