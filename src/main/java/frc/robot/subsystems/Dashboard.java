@@ -30,4 +30,8 @@ public class Dashboard {
         else
             SmartDashboard.putNumber("ShooterRPM", topRPM);
     }
+
+    public void printBallStatus(Elevator elevator){
+        SmartDashboard.putBoolean("ballStatus", elevator.topSensorHasBall());
+    }
 }
