@@ -170,11 +170,6 @@ public class Robot extends TimedRobot {
     if (xbox.getRightBumper()) {
       comp.disable();
     }
-      
-<<<<<<< HEAD
-
-
-
 
     if(xbox.getXButton()){
       elevator.on();
@@ -182,15 +177,8 @@ public class Robot extends TimedRobot {
       elevator.updateElevator();
     }
 
-
-
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
-
-=======
->>>>>>> b705ee3a7eb303974a9b88ef7180232bf3511bac
-
-
     
     //This is the method for the debounce. It is set to 0.2 seconds. 
     //Timer.delay(0.2)
