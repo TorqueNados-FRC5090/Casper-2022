@@ -56,7 +56,6 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-  private double leftTrigger; 
 
   /**
    * This function is run when the robot is first started up and should be used
@@ -83,8 +82,8 @@ public class Robot extends TimedRobot {
     dashboard = new Dashboard();
 
     elevator = new Elevator(12);
-    //Please change intake motor to the correct motor ID 
-    intake = new Intake(12);
+    // Please change intake motor to the correct motor ID 
+    intake = new Intake(12, .4);
   }
 
   @Override
@@ -191,23 +190,16 @@ public class Robot extends TimedRobot {
 
     //When pressing the left trigger, the intake motor will turn on based on the 
     //amount of pressure applyed to the tigger. 
-    leftTrigger = xbox.getLeftTriggerAxis();
-    if(leftTrigger > 0){
-      intake.setMotor(leftTrigger);
+    if(xbox.getLeftTriggerAxis() > .02){
+      intake.motorOn();
     }
 
 
     //The X button is the shoot button now I guess. If x is not press,
     // the sensor will check if there is a ball in the elevator 
 
-    
-
-
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
-
-
-
 
   }
 }

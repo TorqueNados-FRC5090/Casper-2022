@@ -1,50 +1,59 @@
 package frc.robot.subsystems;
 
+// Imports
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class Intake {
-    //This tells us if the arms are up 
-    boolean solenoidIsUp;
+  // Variable Declaration
+  private DoubleSolenoid dubs;
+  private CANSparkMax motor;
+  private double motorPower;
 
-    //This is used to make sure that we don't turn on intake when the arms are up
-    boolean disableMotor;
+  // Is true if the arms are up 
+  // Motor should NOT move if this is true
+  private boolean solenoidIsUp;
 
-    //Defines the solenoid and motor 
-    private DoubleSolenoid dubs1;
-    private CANSparkMax motor;
+  // Constructor
+  public Intake(int motorID, double motorPower) {
+    // Initialize Variables
+    this.dubs = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
-    //We tell it which motor is for intake 
-    public Intake(int motorID){
-        solenoidIsUp = false;
-        disableMotor = true;
+    this.motor = new CANSparkMax(motorID, MotorType.kBrushless);
+    this.motorPower = motorPower;
 
-        dubs1 = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-        motor = new CANSparkMax(motorID, MotorType.kBrushless);
+    // Arms start in the up position
+    this.solenoidIsUp = true;
+  }
+
+  // Accessor methods
+  public boolean armsAreUp() { return this.solenoidIsUp; }
+  public double getMotorPower() { return this.motorPower; }
+  public int getMotorRPM() { return (int) Math.round(this.motor.getEncoder().getVelocity()); }
+
+  // Put arms up
+  public void up() { dubs.set(DoubleSolenoid.Value.kForward); }
+  // Put arms down
+  public void down() { dubs.set(DoubleSolenoid.Value.kReverse); }
+  // Turn motor on
+  public void motorOn() { if(!solenoidIsUp) motor.set(this.motorPower); }
+  // Turn motor off
+  public void motorOff() { motor.set(0); }
+  // Change the power that the motor gets set to
+  public void setMotorPower(double motorPower) { this.motorPower = motorPower; }
+
+  // If arms are up, they will move down
+  // If arms are down they will move up
+  public void toggleArms() {
+    if(solenoidIsUp){
+      dubs.set(DoubleSolenoid.Value.kReverse);
+      solenoidIsUp = false;
     }
-
-    //This makes the arms move up and down. 
-    public void toggleArms(){
-        if(solenoidIsUp){
-            dubs1.set(DoubleSolenoid.Value.kReverse);
-            solenoidIsUp = false;
-            disableMotor = true;
-        }else{
-          dubs1.set(DoubleSolenoid.Value.kForward);
-          solenoidIsUp =  true;
-          disableMotor = false;
-        }
+    else {
+      dubs.set(DoubleSolenoid.Value.kForward);
+      solenoidIsUp = true;
     }
-
-    //This turns on the motor for intake 
-    public void setMotor(double motorDirection){   
-      if(disableMotor == false){
-        motor.set(motorDirection);
-
-      }
-    }
-
+  }
 }
