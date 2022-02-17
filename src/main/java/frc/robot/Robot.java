@@ -1,9 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
-
-
 package frc.robot;
 
 // Controller Imports
@@ -14,8 +8,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-
-import java.io.IOException;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
@@ -30,7 +22,9 @@ import frc.robot.subsystems.Limelight;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer; //This is the debounce library 
+import edu.wpi.first.wpilibj.Timer;
+import java.io.IOException;
+
 
 
 /**
@@ -57,15 +51,12 @@ public class Robot extends TimedRobot {
   private DifferentialDrive m_myRobot;
   private Compressor comp;
 
-  /**
-   * This function is run when the robot is first started up and should be used
-   * for any initialization code.
-   */
+  
+  // This function is run when the robot is first started up and should be used
+  // for any initialization code.
   @Override
   public void robotInit() {
     // Initialize variables
-    comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
-
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
 
@@ -78,12 +69,13 @@ public class Robot extends TimedRobot {
 
     shooter = new Shooter(5, 9);
     shooter.setLock(true);
-  
-    dashboard = new Dashboard();
 
     elevator = new Elevator(12);
     // Please change intake motor to the correct motor ID 
     intake = new Intake(12, .4);
+    comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
+
+    dashboard = new Dashboard();
   }
 
   @Override
@@ -95,7 +87,7 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods. This must be called from the
     // robot's periodic
     // block in order for anything in the Command-based framework to work.
-    // CommandScheduler.getInstance().run();
+    //CommandScheduler.getInstance().run();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -107,7 +99,7 @@ public class Robot extends TimedRobot {
   public void disabledPeriodic() {
   }
 
-  /**
+  /** 
    * This autonomous runs the autonomous command selected by your
    * {@link RobotContainer} class.
    */
@@ -156,9 +148,10 @@ public class Robot extends TimedRobot {
       shooter.setPower(xbox.getRightTriggerAxis());
     }
 
-    // 'B' turns off the shooter
-    if (xbox.getBButton()) { 
-      shooter.off(); 
+    // When pressing the left trigger, the intake motor will turn on based on the 
+    // amount of pressure applyed to the tigger. 
+    if(xbox.getLeftTriggerAxis() > .02){
+      intake.motorSet(xbox.getLeftTriggerAxis());
     }
 
     // 'LB' turns the compressor on
@@ -170,6 +163,12 @@ public class Robot extends TimedRobot {
       comp.disable();
     }
 
+    // 'B' turns off the shooter
+    if (xbox.getBButton()) { 
+      shooter.off(); 
+    }
+
+    // Holding x activates the elevator
     if(xbox.getXButton()){
       elevator.on();
     }else{
@@ -178,28 +177,15 @@ public class Robot extends TimedRobot {
 
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
-    
-    //This is the method for the debounce. It is set to 0.2 seconds. 
-    //Timer.delay(0.2)
 
-    //"Y" is to up the arms up and down + debounce 
+    // 'Y' toggles the arm position
     if(xbox.getYButton()){
       Timer.delay(0.2); //This is debounce 
       intake.toggleArms();
     }
 
-    //When pressing the left trigger, the intake motor will turn on based on the 
-    //amount of pressure applyed to the tigger. 
-    if(xbox.getLeftTriggerAxis() > .02){
-      intake.motorOn();
-    }
-
-
-    //The X button is the shoot button now I guess. If x is not press,
-    // the sensor will check if there is a ball in the elevator 
-
     // Update the SmartDashboard
     dashboard.printShooterRPM(shooter);
-
+    dashboard.printBallStatus(elevator);
   }
 }
