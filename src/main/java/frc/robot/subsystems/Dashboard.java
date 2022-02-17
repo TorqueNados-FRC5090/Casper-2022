@@ -10,7 +10,14 @@ public class Dashboard {
 
     // Prints the rpm of a shooter object to a SmartDashboard
     public void printShooterRPM( Shooter shooter ) {
-            SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotor().getEncoder().getVelocity()));
+        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotor().getEncoder().getVelocity()));
+    }
+
+    // Prints the status of the elevator to the dashboard via two
+    // booleans that return true when a ball is present
+    public void printBallStatus(Elevator elevator){
+        SmartDashboard.putBoolean("Top Sensor", elevator.topSensorHasBall());
+        SmartDashboard.putBoolean("Bottom Sensor", elevator.bottomSensorHasBall());
     }
 
     /* Prints the rpm of a shooter object to a SmartDashboard
@@ -29,9 +36,5 @@ public class Dashboard {
             SmartDashboard.putNumber("ShooterRPM", bottomRPM);
         else
             SmartDashboard.putNumber("ShooterRPM", topRPM);
-    }
-
-    public void printBallStatus(Elevator elevator){
-        SmartDashboard.putBoolean("ballStatus", elevator.topSensorHasBall());
     }
 }
