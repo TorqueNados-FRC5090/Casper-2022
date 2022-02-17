@@ -35,12 +35,19 @@ public class Intake {
 
   // Put arms up
   public void up() { dubs.set(DoubleSolenoid.Value.kForward); }
+
   // Put arms down
   public void down() { dubs.set(DoubleSolenoid.Value.kReverse); }
+
   // Turn motor on
   public void motorOn() { if(!solenoidIsUp) motor.set(this.motorPower); }
+
+  // Turn the motor on and override the default power
+  public void motorSet(double power) { if(!solenoidIsUp) motor.set(power); }
+
   // Turn motor off
   public void motorOff() { motor.set(0); }
+
   // Change the power that the motor gets set to
   public void setMotorPower(double motorPower) { this.motorPower = motorPower; }
 
