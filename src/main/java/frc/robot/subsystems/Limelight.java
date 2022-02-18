@@ -17,7 +17,7 @@ public class Limelight {
 
     // Constructor
     public Limelight() {
-        table = new int[15][4];
+        table = new int[15][3];
     }
 
     // Fills the array with each square's index
@@ -112,7 +112,6 @@ public class Limelight {
                     table[i][0] = scan.nextInt(); 
                     table[i][1] = scan.nextInt();
                     table[i][2] = scan.nextInt();
-                    table[i][3] = scan.nextInt();
                     i++;
                 }
                 catch ( InputMismatchException e ) { break; }

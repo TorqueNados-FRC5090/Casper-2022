@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
 
     elevator = new Elevator(12);
     // Please change intake motor to the correct motor ID 
-    intake = new Intake(12, .4);
+    intake = new Intake(14, .4);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     dashboard = new Dashboard();
@@ -132,7 +132,7 @@ public class Robot extends TimedRobot {
 
     // Print limelight test data
     try {
-      limelight.testData();
+      limelight.loadFromFile("./Test.txt");
       limelight.printData();
     } catch (IOException e) { e.printStackTrace(); }
   }
