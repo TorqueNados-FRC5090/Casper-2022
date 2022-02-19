@@ -25,6 +25,9 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import java.io.IOException;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 
 
 /**
@@ -50,7 +53,7 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-
+  private CANSparkMax climberMotor1, climberMotor2;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -60,6 +63,9 @@ public class Robot extends TimedRobot {
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
 
+    climberMotor1 = new CANSparkMax(11, MotorType.kBrushless);
+    climberMotor2 = new CANSparkMax(12, MotorType.kBrushless);
+  
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
@@ -70,7 +76,7 @@ public class Robot extends TimedRobot {
     shooter = new Shooter(5, 9);
     shooter.setLock(true);
 
-    elevator = new Elevator(12);
+    elevator = new Elevator(13);
     // Please change intake motor to the correct motor ID 
     intake = new Intake(14, .4);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
@@ -150,8 +156,18 @@ public class Robot extends TimedRobot {
 
     // When pressing the left trigger, the intake motor will turn on based on the 
     // amount of pressure applyed to the tigger. 
-    if(xbox.getLeftTriggerAxis() > .02){
+    if (xbox.getLeftTriggerAxis() > 0){
       intake.motorSet(xbox.getLeftTriggerAxis());
+      climberMotor1.set(.95);
+      climberMotor2.set(.95);
+    }
+    else {
+      climberMotor1.set(0);
+      climberMotor2.set(0);
+    }
+    if (xbox.getLeftBumper()) {
+      climberMotor1.set(-.95);
+      climberMotor2.set(-.95);
     }
 
     // 'LB' turns the compressor on
@@ -166,6 +182,8 @@ public class Robot extends TimedRobot {
     // 'B' turns off the shooter
     if (xbox.getBButton()) { 
       shooter.off(); 
+      climberMotor1.set(0);
+      climberMotor2.set(0);
     }
 
     // Holding x activates the elevator
