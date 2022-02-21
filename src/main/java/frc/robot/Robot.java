@@ -191,7 +191,8 @@ public class Robot extends TimedRobot {
     // Holding x activates the elevator
     if(xbox.getXButton()){
       elevator.on();
-    }else{
+    }
+    else {
       elevator.updateElevator();
     }
 
