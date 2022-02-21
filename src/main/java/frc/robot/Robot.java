@@ -2,7 +2,6 @@ package frc.robot;
 
 // Controller Imports
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.buttons.JoystickButton;
 import edu.wpi.first.wpilibj.Joystick;
 
 // Actuation imports (Motors, Compressors, etc.)
@@ -26,9 +25,6 @@ import frc.robot.subsystems.Climber;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import java.io.IOException;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
 
