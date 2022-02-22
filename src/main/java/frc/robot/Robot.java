@@ -161,17 +161,13 @@ public class Robot extends TimedRobot {
       intake.motorOff();
     }
 
-    if (xbox.getLeftTriggerAxis() > 0) {
-      climber.setPower(.95);
-    }
+    // This will control climber arm movements individually
+    // with motor power derived from stick axis
 
-    else {
-      climber.setPower(0);
-    }
+    climber.setLeftArmPower(xbox.getLeftY());
+    
+    climber.setRightArmPower(xbox.getRightY());
 
-    if (xbox.getLeftBumper()) {
-      climber.setPower(-.95);
-    }
 
     // 'LB' turns the compressor on
     if (xbox.getLeftBumper()) {
@@ -185,7 +181,7 @@ public class Robot extends TimedRobot {
     // 'B' turns off the shooter
     if (xbox.getBButton()) { 
       shooter.off(); 
-      climber.setPower(0);
+      climber.setDualArmPowerOff();
     }
 
     // Holding x activates the elevator
