@@ -153,8 +153,12 @@ public class Robot extends TimedRobot {
 
     // When pressing the left trigger, the intake motor will turn on based on the 
     // amount of pressure applyed to the tigger. 
-    if (m_stick.getRawButton(1) ) {
-      intake.motorSet(1);
+    if (m_stick.getTrigger()) {
+      intake.motorOn();
+    }
+
+    else {
+      intake.motorOff();
     }
 
     if (xbox.getLeftTriggerAxis() > 0) {
