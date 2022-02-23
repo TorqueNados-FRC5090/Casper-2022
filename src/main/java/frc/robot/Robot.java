@@ -181,7 +181,7 @@ public class Robot extends TimedRobot {
     // 'B' turns off the shooter
     if (xbox.getBButton()) { 
       shooter.off(); 
-      climber.setDualArmPowerOff();
+      climber.off();
     }
 
     // Holding x activates the elevator
