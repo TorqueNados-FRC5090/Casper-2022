@@ -14,6 +14,14 @@ public class Climber {
         climberMotor2 = new CANSparkMax(motorID2, MotorType.kBrushless);
     }
 
+    public double getLeftArmPower () {
+        return climberMotor1.get();
+    }
+
+    public double getRightArmPower () {
+        return climberMotor2.get();
+    }
+
     public void setLeftArmPower (double pwr) {
         climberMotor1.set(pwr);
     }

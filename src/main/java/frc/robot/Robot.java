@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 // Actuation imports (Motors, Compressors, etc.)
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -52,6 +53,9 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
+
+  private DigitalInput leftClimberLimitSwitch;
+  private DigitalInput rightClimberLimitSwitch;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -79,6 +83,9 @@ public class Robot extends TimedRobot {
     climber = new Climber(11, 12);
 
     dashboard = new Dashboard();
+
+    leftClimberLimitSwitch = new DigitalInput(2);
+    rightClimberLimitSwitch = new DigitalInput(3);
   }
 
   @Override
@@ -168,6 +175,34 @@ public class Robot extends TimedRobot {
     
     climber.setRightArmPower(xbox.getRightY());
 
+
+    // If limit switches are activated on left or right climber,
+    // the climber is unable to move downwards.
+    if (!leftClimberLimitSwitch.get()) {
+      climber.setLeftArmPower(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
+    }
+
+    else {
+      climber.setLeftArmPower(xbox.getLeftY());
+    }
+
+    // addresses stick drift
+    if (climber.getLeftArmPower() < .05 && climber.getLeftArmPower() > -.05) {
+      climber.setLeftArmPower(0);
+    }
+
+    if (!rightClimberLimitSwitch.get()) {
+      climber.setRightArmPower(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
+    }
+
+    else {
+      climber.setRightArmPower(xbox.getRightY());
+    }
+
+    // addresses stick drift
+    if (climber.getRightArmPower() < .05 && climber.getRightArmPower() > -.05) {
+      climber.setRightArmPower(0);
+    }
 
     // 'LB' turns the compressor on
     if (xbox.getLeftBumper()) {
