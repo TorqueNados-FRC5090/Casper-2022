@@ -45,13 +45,12 @@ public class Shooter {
 
   // Sets shooter to specified power
   // Power is locked to [-1, 1]
-  public void setPower( double pwr ) {
+  public void set( double pwr ) {
     // If the lock is on and the desired power
     // is not greater than the current power,
     // the function immediately ends
-    if(this.locked) 
-      if(pwr <= topMotor.get())
-        return;
+    if(this.locked && pwr <= topMotor.get())
+      return; 
 
     // Force pwr in bounds
     if( pwr > 1 ) { pwr = 1; }
@@ -67,7 +66,7 @@ public class Shooter {
   }
 
   // Sets shooter to full power
-  public void fullTilt() {
+  public void fullSpeed() {
     topMotor.set(1);
     bottomMotor.set(1);
     shooterIsOn = true;
@@ -84,7 +83,7 @@ public class Shooter {
   // If shooter is on, this will turn it off
   public void toggle() {
     if( shooterIsOn ) { this.off(); }
-    else { this.fullTilt(); }
+    else { this.fullSpeed(); }
   }
 
   // If shooter is off, this will set it to
@@ -92,6 +91,6 @@ public class Shooter {
   // If shooter is on, this will turn it off
   public void toggle( double pwr ) {
     if( shooterIsOn ) { this.off(); }
-    else { this.setPower(pwr); }
+    else { this.set(pwr); }
   }
 }
