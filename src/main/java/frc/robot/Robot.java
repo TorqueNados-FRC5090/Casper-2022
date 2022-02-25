@@ -53,7 +53,6 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-  private CANSparkMax climberMotor1, climberMotor2;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -62,9 +61,6 @@ public class Robot extends TimedRobot {
     // Initialize variables
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
-
-    climberMotor1 = new CANSparkMax(11, MotorType.kBrushless);
-    climberMotor2 = new CANSparkMax(12, MotorType.kBrushless);
   
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
@@ -76,9 +72,9 @@ public class Robot extends TimedRobot {
     shooter = new Shooter(5, 9);
     shooter.setLock(true);
 
-    elevator = new Elevator(13);
-    // Please change intake motor to the correct motor ID 
-    intake = new Intake(14, .4);
+    elevator = new Elevator(13, 0, 1);
+
+    intake = new Intake(10);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     dashboard = new Dashboard();
@@ -96,7 +92,7 @@ public class Robot extends TimedRobot {
     //CommandScheduler.getInstance().run();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
+  // This function is called once each time the robot enters Disabled mode.
   @Override
   public void disabledInit() {
   }
@@ -135,12 +131,6 @@ public class Robot extends TimedRobot {
     // }
 
     comp.disable();
-
-    // Print limelight test data
-    try {
-      limelight.loadFromFile("./Test.txt");
-      limelight.printData();
-    } catch (IOException e) { e.printStackTrace(); }
   }
 
   /** This function is called periodically during operator control. */
@@ -149,61 +139,6 @@ public class Robot extends TimedRobot {
     // Puts the robot in arcade drive
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
     
-    // 'RT' sets the shooter power and locks at highest value
-    if (xbox.getRightTriggerAxis() > 0 ) {
-      shooter.setPower(xbox.getRightTriggerAxis());
-    }
-
-    // When pressing the left trigger, the intake motor will turn on based on the 
-    // amount of pressure applyed to the tigger. 
-    if (xbox.getLeftTriggerAxis() > 0){
-      intake.motorSet(xbox.getLeftTriggerAxis());
-      climberMotor1.set(.95);
-      climberMotor2.set(.95);
-    }
-    else {
-      climberMotor1.set(0);
-      climberMotor2.set(0);
-    }
-    if (xbox.getLeftBumper()) {
-      climberMotor1.set(-.95);
-      climberMotor2.set(-.95);
-    }
-
-    // 'LB' turns the compressor on
-    if (xbox.getLeftBumper()) {
-      comp.enableDigital();
-    }
-    // 'RB' turns the compressor off
-    if (xbox.getRightBumper()) {
-      comp.disable();
-    }
-
-    // 'B' turns off the shooter
-    if (xbox.getBButton()) { 
-      shooter.off(); 
-      climberMotor1.set(0);
-      climberMotor2.set(0);
-    }
-
-    // Holding x activates the elevator
-    if(xbox.getXButton()){
-      elevator.on();
-    }else{
-      elevator.updateElevator();
-    }
-
-    // Update the SmartDashboard
-    dashboard.printShooterRPM(shooter);
-
-    // 'Y' toggles the arm position
-    if(xbox.getYButton()){
-      Timer.delay(0.2); //This is debounce 
-      intake.toggleArms();
-    }
-
-    // Update the SmartDashboard
-    dashboard.printShooterRPM(shooter);
-    dashboard.printBallStatus(elevator);
+    //robot code here
   }
 }
