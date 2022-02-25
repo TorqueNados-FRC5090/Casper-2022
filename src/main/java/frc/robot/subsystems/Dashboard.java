@@ -10,7 +10,7 @@ public class Dashboard {
 
     // Prints the rpm of a shooter object to a SmartDashboard
     public void printShooterRPM( Shooter shooter ) {
-        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotor().getEncoder().getVelocity()));
+        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotorRPM()));
     }
 
     // Prints the status of the elevator to the dashboard via two
@@ -28,8 +28,8 @@ public class Dashboard {
      */
     public void testShooterRPM( Shooter shooter ) {
         // Make temporary variables to shorten code
-        double topRPM = Math.round(shooter.getTopMotor().getEncoder().getVelocity());
-        double bottomRPM = Math.round(shooter.getBottomMotor().getEncoder().getVelocity());
+        double topRPM = Math.round(shooter.getTopMotorRPM());
+        double bottomRPM = Math.round(shooter.getBottomMotorRPM());
 
         // Logic to insure that we can test with only one motor
         if( topRPM == 0 && bottomRPM != 0 )
