@@ -159,6 +159,8 @@ public class Robot extends TimedRobot {
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
+    else 
+      intake.motorOff();
 
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper())
@@ -210,7 +212,6 @@ public class Robot extends TimedRobot {
       shooter.off();
       elevator.off();
       climber.off();
-      intake.motorOff();
       turret.off();
       hood.off();
     }
