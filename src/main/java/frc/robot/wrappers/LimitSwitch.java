@@ -1,4 +1,4 @@
-package frc.robot.helpers;
+package frc.robot.wrappers;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 

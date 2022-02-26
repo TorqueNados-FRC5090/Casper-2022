@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.wrappers.LimitSwitch;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
@@ -21,9 +22,8 @@ import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.robot.helpers.LimitSwitch;
 import frc.robot.misc_subclasses.Dashboard;
-import frc.robot.misc_subclasses.Limelight;
+import frc.robot.misc_subclasses.Limelight; 
 
 
 
