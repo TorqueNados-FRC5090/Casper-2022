@@ -16,14 +16,12 @@ public class Shooter {
   public Shooter( int topID, int bottomID) {
     // Initiallize top motor
     this.topMotor = new CANSparkMax(topID, MotorType.kBrushless);
-    this.topMotor.restoreFactoryDefaults();
 
     // Initialize bottom motor
     // Bottom motor is inverted so that it will
     // always spin opposite to the top motor
     this.bottomMotor = new CANSparkMax(bottomID, MotorType.kBrushless);
     this.bottomMotor.setInverted(true);
-    this.bottomMotor.restoreFactoryDefaults();
 
     // Shooter starts in the 'off' state
     this.shooterIsOn = false;
@@ -51,10 +49,6 @@ public class Shooter {
     // the function immediately ends
     if(this.locked && pwr <= topMotor.get())
       return; 
-
-    // Force pwr in bounds
-    if( pwr > 1 ) { pwr = 1; }
-    else if( pwr < -1 ) { pwr = -1; }
 
     // Set motors
     topMotor.set(pwr);
