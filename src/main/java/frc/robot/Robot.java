@@ -81,7 +81,6 @@ public class Robot extends TimedRobot {
     rightTurretSwitch = new LimitSwitch(5);
 
     shooter = new Shooter(5, 9);
-    shooter.setLock(true);
 
     hood = new Hood(15);
     hoodZeroSwitch = new LimitSwitch(6);
