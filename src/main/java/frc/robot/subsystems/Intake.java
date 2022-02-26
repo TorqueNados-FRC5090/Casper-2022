@@ -23,7 +23,7 @@ public class Intake {
     this.motor = new CANSparkMax(motorID, MotorType.kBrushless);
 
     // Arms start in the up position
-    this.solenoidIsUp = false;
+    this.solenoidIsUp = true;
   }
 
   // Accessor methods
