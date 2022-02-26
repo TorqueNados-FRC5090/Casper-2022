@@ -3,8 +3,6 @@ package frc.robot.wrappers;
 // Imports
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 
 public class GenericPID {
     // Declare variables
