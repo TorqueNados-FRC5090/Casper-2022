@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Joystick;
 
 // Actuation imports (Motors, Compressors, etc.)
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -19,14 +20,12 @@ import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Dashboard;
 import frc.robot.subsystems.Limelight;
+import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import java.io.IOException;
-
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 
 
@@ -49,11 +48,14 @@ public class Robot extends TimedRobot {
   private Limelight limelight;
   private Elevator elevator; 
   private Intake intake;
+  private Climber climber;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-  private CANSparkMax climberMotor1, climberMotor2;
+
+  private DigitalInput leftClimberLimitSwitch;
+  private DigitalInput rightClimberLimitSwitch;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -63,9 +65,6 @@ public class Robot extends TimedRobot {
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
 
-    climberMotor1 = new CANSparkMax(11, MotorType.kBrushless);
-    climberMotor2 = new CANSparkMax(12, MotorType.kBrushless);
-  
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
@@ -78,10 +77,15 @@ public class Robot extends TimedRobot {
 
     elevator = new Elevator(13);
     // Please change intake motor to the correct motor ID 
-    intake = new Intake(14, .4);
+    intake = new Intake(14, 1);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
+    climber = new Climber(11, 12);
+
     dashboard = new Dashboard();
+
+    leftClimberLimitSwitch = new DigitalInput(2);
+    rightClimberLimitSwitch = new DigitalInput(3);
   }
 
   @Override
@@ -156,18 +160,48 @@ public class Robot extends TimedRobot {
 
     // When pressing the left trigger, the intake motor will turn on based on the 
     // amount of pressure applyed to the tigger. 
-    if (xbox.getLeftTriggerAxis() > 0){
-      intake.motorSet(xbox.getLeftTriggerAxis());
-      climberMotor1.set(.95);
-      climberMotor2.set(.95);
+    if (m_stick.getTrigger()) {
+      intake.motorOn();
     }
+
     else {
-      climberMotor1.set(0);
-      climberMotor2.set(0);
+      intake.motorOff();
     }
-    if (xbox.getLeftBumper()) {
-      climberMotor1.set(-.95);
-      climberMotor2.set(-.95);
+
+    // This will control climber arm movements individually
+    // with motor power derived from stick axis
+
+    climber.setLeft(xbox.getLeftY());
+    
+    climber.setRight(xbox.getRightY());
+
+
+    // If limit switches are activated on left or right climber,
+    // the climber is unable to move downwards.
+    if (!leftClimberLimitSwitch.get()) {
+      climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
+    }
+
+    else {
+      climber.setLeft(xbox.getLeftY());
+    }
+
+    // addresses stick drift
+    if (climber.getLeft() < .05 && climber.getLeft() > -.05) {
+      climber.setLeft(0);
+    }
+
+    if (!rightClimberLimitSwitch.get()) {
+      climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
+    }
+
+    else {
+      climber.setRight(xbox.getRightY());
+    }
+
+    // addresses stick drift
+    if (climber.getRight() < .05 && climber.getRight() > -.05) {
+      climber.setRight(0);
     }
 
     // 'LB' turns the compressor on
@@ -182,14 +216,14 @@ public class Robot extends TimedRobot {
     // 'B' turns off the shooter
     if (xbox.getBButton()) { 
       shooter.off(); 
-      climberMotor1.set(0);
-      climberMotor2.set(0);
+      climber.off();
     }
 
     // Holding x activates the elevator
     if(xbox.getXButton()){
       elevator.on();
-    }else{
+    }
+    else {
       elevator.updateElevator();
     }
 
