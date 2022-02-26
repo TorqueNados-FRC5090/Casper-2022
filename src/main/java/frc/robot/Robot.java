@@ -171,37 +171,37 @@ public class Robot extends TimedRobot {
     // This will control climber arm movements individually
     // with motor power derived from stick axis
 
-    climber.setLeftArmPower(xbox.getLeftY());
+    climber.setLeft(xbox.getLeftY());
     
-    climber.setRightArmPower(xbox.getRightY());
+    climber.setRight(xbox.getRightY());
 
 
     // If limit switches are activated on left or right climber,
     // the climber is unable to move downwards.
     if (!leftClimberLimitSwitch.get()) {
-      climber.setLeftArmPower(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
+      climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
     }
 
     else {
-      climber.setLeftArmPower(xbox.getLeftY());
+      climber.setLeft(xbox.getLeftY());
     }
 
     // addresses stick drift
-    if (climber.getLeftArmPower() < .05 && climber.getLeftArmPower() > -.05) {
-      climber.setLeftArmPower(0);
+    if (climber.getLeft() < .05 && climber.getLeft() > -.05) {
+      climber.setLeft(0);
     }
 
     if (!rightClimberLimitSwitch.get()) {
-      climber.setRightArmPower(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
+      climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
     }
 
     else {
-      climber.setRightArmPower(xbox.getRightY());
+      climber.setRight(xbox.getRightY());
     }
 
     // addresses stick drift
-    if (climber.getRightArmPower() < .05 && climber.getRightArmPower() > -.05) {
-      climber.setRightArmPower(0);
+    if (climber.getRight() < .05 && climber.getRight() > -.05) {
+      climber.setRight(0);
     }
 
     // 'LB' turns the compressor on
