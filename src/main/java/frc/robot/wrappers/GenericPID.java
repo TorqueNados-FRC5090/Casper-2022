@@ -62,8 +62,8 @@ public class GenericPID {
     public void setI(double I) { this.I = I; controller.setI(I); }
     public void setD(double D) { this.D = D; controller.setD(D); }
     public void setControlType(CANSparkMax.ControlType controlType) { this.controlType = controlType; }
-    public void setMax(double min) { this.min = min; }
-    public void setMin(double max) { this.max = max; }
+    public void setMax(double min) { this.min = min; setSetpoint(this.setpoint); }
+    public void setMin(double max) { this.max = max; setSetpoint(this.setpoint); }
     public void setDomain(double min, double max) { this.min = min; this.max = max; }
     
     // Forces the setpoint in bounds when it is set
