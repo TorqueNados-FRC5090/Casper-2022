@@ -53,12 +53,9 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-<<<<<<< HEAD
-=======
 
   private DigitalInput leftClimberLimitSwitch;
   private DigitalInput rightClimberLimitSwitch;
->>>>>>> 9e86e6b944ffaaf0dd87f21d652530a6a2fc4b67
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -67,11 +64,7 @@ public class Robot extends TimedRobot {
     // Initialize variables
     xbox  = new XboxController(1);
     m_stick = new Joystick(0);
-<<<<<<< HEAD
   
-=======
-
->>>>>>> 9e86e6b944ffaaf0dd87f21d652530a6a2fc4b67
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
@@ -82,15 +75,9 @@ public class Robot extends TimedRobot {
     shooter = new Shooter(5, 9);
     shooter.setLock(true);
 
-<<<<<<< HEAD
     elevator = new Elevator(13, 0, 1);
 
     intake = new Intake(10);
-=======
-    elevator = new Elevator(13);
-    // Please change intake motor to the correct motor ID 
-    intake = new Intake(14, 1);
->>>>>>> 9e86e6b944ffaaf0dd87f21d652530a6a2fc4b67
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     climber = new Climber(11, 12);
@@ -160,95 +147,6 @@ public class Robot extends TimedRobot {
     // Puts the robot in arcade drive
     m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
     
-<<<<<<< HEAD
     //robot code here
-=======
-    // 'RT' sets the shooter power and locks at highest value
-    if (xbox.getRightTriggerAxis() > 0 ) {
-      shooter.setPower(xbox.getRightTriggerAxis());
-    }
-
-    // When pressing the left trigger, the intake motor will turn on based on the 
-    // amount of pressure applyed to the tigger. 
-    if (m_stick.getTrigger()) {
-      intake.motorOn();
-    }
-
-    else {
-      intake.motorOff();
-    }
-
-    // This will control climber arm movements individually
-    // with motor power derived from stick axis
-
-    climber.setLeft(xbox.getLeftY());
-    
-    climber.setRight(xbox.getRightY());
-
-
-    // If limit switches are activated on left or right climber,
-    // the climber is unable to move downwards.
-    if (!leftClimberLimitSwitch.get()) {
-      climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
-    }
-
-    else {
-      climber.setLeft(xbox.getLeftY());
-    }
-
-    // addresses stick drift
-    if (climber.getLeft() < .05 && climber.getLeft() > -.05) {
-      climber.setLeft(0);
-    }
-
-    if (!rightClimberLimitSwitch.get()) {
-      climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
-    }
-
-    else {
-      climber.setRight(xbox.getRightY());
-    }
-
-    // addresses stick drift
-    if (climber.getRight() < .05 && climber.getRight() > -.05) {
-      climber.setRight(0);
-    }
-
-    // 'LB' turns the compressor on
-    if (xbox.getLeftBumper()) {
-      comp.enableDigital();
-    }
-    // 'RB' turns the compressor off
-    if (xbox.getRightBumper()) {
-      comp.disable();
-    }
-
-    // 'B' turns off the shooter
-    if (xbox.getBButton()) { 
-      shooter.off(); 
-      climber.off();
-    }
-
-    // Holding x activates the elevator
-    if(xbox.getXButton()){
-      elevator.on();
-    }
-    else {
-      elevator.updateElevator();
-    }
-
-    // Update the SmartDashboard
-    dashboard.printShooterRPM(shooter);
-
-    // 'Y' toggles the arm position
-    if(xbox.getYButton()){
-      Timer.delay(0.2); //This is debounce 
-      intake.toggleArms();
-    }
-
-    // Update the SmartDashboard
-    dashboard.printShooterRPM(shooter);
-    dashboard.printBallStatus(elevator);
->>>>>>> 9e86e6b944ffaaf0dd87f21d652530a6a2fc4b67
   }
 }
