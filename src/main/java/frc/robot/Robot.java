@@ -8,7 +8,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.wrappers.GenericPID;
 import frc.robot.wrappers.LimitSwitch;
+
+import com.revrobotics.CANSparkMax;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
@@ -60,6 +63,7 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftTurretSwitch;
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
+  private GenericPID shooterPID1, shooterPID2;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -81,6 +85,11 @@ public class Robot extends TimedRobot {
     rightTurretSwitch = new LimitSwitch(5);
 
     shooter = new Shooter(5, 9);
+    shooterPID1 = new GenericPID(
+      shooter.getTopMotor(), CANSparkMax.ControlType.kVelocity, .0005);
+    shooterPID2 = new GenericPID(
+      shooter.getBottomMotor(), CANSparkMax.ControlType.kVelocity, .0005);
+    
 
     hood = new Hood(15);
     hoodZeroSwitch = new LimitSwitch(6);
@@ -177,9 +186,13 @@ public class Robot extends TimedRobot {
         elevator.set(-.2);
         break;
       case 90: // RIGHT
+        shooterPID1.pause();
+        shooterPID2.pause();
         shooter.increasePowerBy(.004);
         break;
       case 270: // LEFT
+        shooterPID1.pause();
+        shooterPID2.pause();
         shooter.decreasePowerBy(.004);
         break;
       case -1: // NOT PRESSED
@@ -189,6 +202,12 @@ public class Robot extends TimedRobot {
     // Right trigger pushes a ball into the shooter
     if(xbox.getRightTriggerAxis() > 0)
       elevator.fullForward();
+
+    if(xbox.getLeftTriggerAxis() > 0) {
+      shooterPID1.getController().setP(.1);
+      shooterPID1.getController().setReference(1000, CANSparkMax.ControlType.kVelocity);
+    }
+      
 
     // Climber cannot go further down after hitting limit switch
     if(leftClimberSwitch.isPressed())
@@ -213,6 +232,8 @@ public class Robot extends TimedRobot {
       intake.motorOff();
       turret.off();
       hood.off();
+      shooterPID1.pause();
+      shooterPID2.pause();
     }
 
     // Update anything that needs to update
