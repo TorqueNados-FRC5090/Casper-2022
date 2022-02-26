@@ -6,7 +6,6 @@ import edu.wpi.first.wpilibj.Joystick;
 
 // Actuation imports (Motors, Compressors, etc.)
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 
@@ -24,8 +23,7 @@ import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import java.io.IOException;
+import frc.robot.helpers.LimitSwitch;
 
 
 
@@ -53,9 +51,8 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-
-  private DigitalInput leftClimberLimitSwitch;
-  private DigitalInput rightClimberLimitSwitch;
+  private LimitSwitch leftClimberSwitch;
+  private LimitSwitch rightClimberSwitch;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -81,11 +78,10 @@ public class Robot extends TimedRobot {
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     climber = new Climber(11, 12);
+    leftClimberSwitch = new LimitSwitch(2);
+    rightClimberSwitch = new LimitSwitch(3);
 
     dashboard = new Dashboard();
-
-    leftClimberLimitSwitch = new DigitalInput(2);
-    rightClimberLimitSwitch = new DigitalInput(3);
   }
 
   @Override
