@@ -156,7 +156,68 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
     m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
+
+    // Joystick trigger activates motor
+    if(joystick.getTrigger())
+      intake.set(1);
+
+    // Manually control the turret with bumpers
+    if(xbox.getLeftBumper())
+      turret.setPower(-.25);
+    else if(xbox.getRightBumper())
+      turret.setPower(.25);
+    else 
+      turret.off();
+
+    // Dpad controls
+    switch(xbox.getPOV()){
+      case 0: // UP
+        elevator.set(.2);
+        break;
+      case 180: // DOWN
+        elevator.set(-.2);
+        break;
+      case 90: // RIGHT
+        shooter.increasePowerBy(.004);
+        break;
+      case 270: // LEFT
+        shooter.decreasePowerBy(.004);
+        break;
+      case -1: // NOT PRESSED
+        elevator.off();
+    }
+
+    // Right trigger pushes a ball into the shooter
+    if(xbox.getRightTriggerAxis() > 0)
+      elevator.fullForward();
+
+    // Climber cannot go further down after hitting limit switch
+    if(leftClimberSwitch.isPressed())
+      climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
+    else
+      climber.setLeft(xbox.getLeftY());
+
+    if(rightClimberSwitch.isPressed())
+      climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
+    else
+      climber.setRight(xbox.getRightY());
+
+    // X button controls the intake state
+    if(xbox.getXButton())
+      intake.toggleArms();
     
-    //robot code here
+    // B is essentially an e-stop
+    if(xbox.getBButton()){
+      shooter.off();
+      elevator.off();
+      climber.off();
+      intake.motorOff();
+      turret.off();
+      hood.off();
+    }
+
+    // Update anything that needs to update
+    dashboard.printShooterRPM(shooter);
+    shooter.updateCurrentPower();
   }
 }
