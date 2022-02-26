@@ -11,6 +11,7 @@ public class Shooter {
     private CANSparkMax bottomMotor; // CCW
     private boolean shooterIsOn;
     private boolean locked;
+    private double currentPower;
   
   // Constructor method initiallizes variables used
   public Shooter( int topID, int bottomID) {
@@ -30,13 +31,17 @@ public class Shooter {
   }
 
   // Accessor Methods (getters)
-  public CANSparkMax getTopMotor() { return this.topMotor; }
-  public CANSparkMax getBottomMotor() { return this.bottomMotor; }
-  public double getTopMotorRPM() { return this.topMotor.getEncoder().getVelocity(); }
-  public double getBottomMotorRPM() { return this.bottomMotor.getEncoder().getVelocity(); }
-  public boolean isOn() { return this.shooterIsOn; }
-  public boolean isLocked() { return this.locked; }
-  
+  public CANSparkMax getTopMotor() { return topMotor; }
+  public CANSparkMax getBottomMotor() { return bottomMotor; }
+  public double getTopMotorRPM() { return topMotor.getEncoder().getVelocity(); }
+  public double getBottomMotorRPM() { return bottomMotor.getEncoder().getVelocity(); }
+  public boolean isOn() { return shooterIsOn; }
+  public boolean isLocked() { return locked; }
+  public double currentPower() { return currentPower; }
+
+  // Makes sure that current power is accurate
+  public void updateCurrentPower() { currentPower = topMotor.get(); }
+
   // Tracks the power of the motor and
   // locks the power at the highest value detected
   public void setLock(boolean lock) { this.locked = lock; }
@@ -59,8 +64,18 @@ public class Shooter {
     else { shooterIsOn = true; }
   }
 
+  public void increasePowerBy(double pwr) {
+    currentPower = currentPower + pwr;
+    set(currentPower);
+  }
+
+  public void decreasePowerBy(double pwr) {
+    currentPower = currentPower - pwr;
+    set(currentPower);
+  }
+
   // Sets shooter to full power
-  public void fullSpeed() {
+  public void fullPower() {
     topMotor.set(1);
     bottomMotor.set(1);
     shooterIsOn = true;
@@ -77,7 +92,7 @@ public class Shooter {
   // If shooter is on, this will turn it off
   public void toggle() {
     if( shooterIsOn ) { this.off(); }
-    else { this.fullSpeed(); }
+    else { this.fullPower(); }
   }
 
   // If shooter is off, this will set it to
