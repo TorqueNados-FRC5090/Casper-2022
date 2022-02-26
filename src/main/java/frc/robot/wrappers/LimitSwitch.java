@@ -3,12 +3,12 @@ package frc.robot.wrappers;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 // Wrapper class for limit switch
-public class LimitSwitch extends DigitalInput{
+public class LimitSwitch {
     // Create a digital input for the switch
     private DigitalInput limSwitch;
 
+    // Constructor
     public LimitSwitch(int port) {
-        super(port);
         limSwitch = new DigitalInput(port);
     }
 
