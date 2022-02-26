@@ -15,8 +15,10 @@ import edu.wpi.first.cameraserver.CameraServer;
 
 // Subsystem imports
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Climber;
 
@@ -36,7 +38,7 @@ import frc.robot.misc_subclasses.Limelight;
  */
 public class Robot extends TimedRobot {
   // Controller ojects
-  private Joystick m_stick; 
+  private Joystick joystick; 
   private XboxController xbox;
 
   // Subsystem objects
@@ -47,20 +49,25 @@ public class Robot extends TimedRobot {
   private Elevator elevator; 
   private Intake intake;
   private Climber climber;
+  private Turret turret;
+  private Hood hood;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
+  private LimitSwitch leftTurretSwitch;
+  private LimitSwitch rightTurretSwitch;
+  private LimitSwitch hoodZeroSwitch;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
   @Override
   public void robotInit() {
     // Initialize variables
+    joystick = new Joystick(0);
     xbox  = new XboxController(1);
-    m_stick = new Joystick(0);
   
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
@@ -69,8 +76,15 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
     limelight = new Limelight();
 
+    turret = new Turret(14);
+    leftTurretSwitch = new LimitSwitch(4);
+    rightTurretSwitch = new LimitSwitch(5);
+
     shooter = new Shooter(5, 9);
     shooter.setLock(true);
+
+    hood = new Hood(15);
+    hoodZeroSwitch = new LimitSwitch(6);
 
     elevator = new Elevator(13, 0, 1);
 
@@ -141,7 +155,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
+    m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
     
     //robot code here
   }
