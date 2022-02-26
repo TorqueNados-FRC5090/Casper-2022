@@ -17,13 +17,13 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Dashboard;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.helpers.LimitSwitch;
+import frc.robot.misc_subclasses.Dashboard;
+import frc.robot.misc_subclasses.Limelight;
 
 
 

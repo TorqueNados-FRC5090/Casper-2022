@@ -1,7 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.misc_subclasses;
 
 // Imports
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.*;
 
 // This object is used to handle SmartDashboard outputs
 public class Dashboard {
