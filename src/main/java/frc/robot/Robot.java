@@ -6,26 +6,26 @@ import edu.wpi.first.wpilibj.Joystick;
 
 // Actuation imports (Motors, Compressors, etc.)
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.wrappers.LimitSwitch;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
 
 // Subsystem imports
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Drivetrain;
 import frc.robot.subsystems.Elevator;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Dashboard;
-import frc.robot.subsystems.Limelight;
 import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
-import java.io.IOException;
+import frc.robot.misc_subclasses.Dashboard;
+import frc.robot.misc_subclasses.Limelight; 
 
 
 
@@ -38,7 +38,7 @@ import java.io.IOException;
  */
 public class Robot extends TimedRobot {
   // Controller ojects
-  private Joystick m_stick; 
+  private Joystick joystick; 
   private XboxController xbox;
 
   // Subsystem objects
@@ -49,22 +49,26 @@ public class Robot extends TimedRobot {
   private Elevator elevator; 
   private Intake intake;
   private Climber climber;
+  private Turret turret;
+  private Hood hood;
 
   // Misc variables/objects
   private DifferentialDrive m_myRobot;
   private Compressor comp;
-
-  private DigitalInput leftClimberLimitSwitch;
-  private DigitalInput rightClimberLimitSwitch;
+  private LimitSwitch leftClimberSwitch;
+  private LimitSwitch rightClimberSwitch;
+  private LimitSwitch leftTurretSwitch;
+  private LimitSwitch rightTurretSwitch;
+  private LimitSwitch hoodZeroSwitch;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
   @Override
   public void robotInit() {
     // Initialize variables
+    joystick = new Joystick(0);
     xbox  = new XboxController(1);
-    m_stick = new Joystick(0);
-
+  
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
@@ -72,20 +76,25 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
     limelight = new Limelight();
 
-    shooter = new Shooter(5, 9);
-    shooter.setLock(true);
+    turret = new Turret(14);
+    leftTurretSwitch = new LimitSwitch(4);
+    rightTurretSwitch = new LimitSwitch(5);
 
-    elevator = new Elevator(13);
-    // Please change intake motor to the correct motor ID 
-    intake = new Intake(14, 1);
+    shooter = new Shooter(5, 9);
+
+    hood = new Hood(15);
+    hoodZeroSwitch = new LimitSwitch(6);
+
+    elevator = new Elevator(13, 0, 1);
+
+    intake = new Intake(10);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     climber = new Climber(11, 12);
+    leftClimberSwitch = new LimitSwitch(2);
+    rightClimberSwitch = new LimitSwitch(3);
 
     dashboard = new Dashboard();
-
-    leftClimberLimitSwitch = new DigitalInput(2);
-    rightClimberLimitSwitch = new DigitalInput(3);
   }
 
   @Override
@@ -100,7 +109,7 @@ public class Robot extends TimedRobot {
     //CommandScheduler.getInstance().run();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
+  // This function is called once each time the robot enters Disabled mode.
   @Override
   public void disabledInit() {
   }
@@ -138,106 +147,86 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    comp.disable();
-
-    // Print limelight test data
-    try {
-      limelight.loadFromFile("./Test.txt");
-      limelight.printData();
-    } catch (IOException e) { e.printStackTrace(); }
+    comp.enableDigital();
   }
 
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    m_myRobot.arcadeDrive(-m_stick.getRawAxis(0), m_stick.getRawAxis(1));
-    
-    // 'RT' sets the shooter power and locks at highest value
-    if (xbox.getRightTriggerAxis() > 0 ) {
-      shooter.setPower(xbox.getRightTriggerAxis());
-    }
+    m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
-    // When pressing the left trigger, the intake motor will turn on based on the 
-    // amount of pressure applyed to the tigger. 
-    if (m_stick.getTrigger()) {
-      intake.motorOn();
-    }
-
-    else {
+    // Joystick trigger activates motor
+    if(joystick.getTrigger())
+      intake.set(1);
+    else 
       intake.motorOff();
+
+    // Manually control the turret with bumpers
+    if(xbox.getLeftBumper())
+      turret.setPower(.2);
+    else if(xbox.getRightBumper())
+      turret.setPower(-.2);
+    else 
+      turret.off();
+
+    // Dpad controls
+    switch(xbox.getPOV()){
+      case 0: // UP
+        elevator.set(.2);
+        break;
+      case 180: // DOWN
+        elevator.set(-.2);
+        break;
+      case 90: // RIGHT
+        shooter.decreasePowerBy(.004);
+        break;
+      case 270: // LEFT
+        shooter.increasePowerBy(.004);
+        break;
+      case -1: // NOT PRESSED
+        elevator.off();
     }
 
-    // This will control climber arm movements individually
-    // with motor power derived from stick axis
+    // Right trigger pushes a ball into the shooter
+    if(xbox.getRightTriggerAxis() > 0)
+      elevator.fullForward();
 
-    climber.setLeft(xbox.getLeftY());
-    
-    climber.setRight(xbox.getRightY());
-
-
-    // If limit switches are activated on left or right climber,
-    // the climber is unable to move downwards.
-    if (!leftClimberLimitSwitch.get()) {
+    // Climber cannot go further down after hitting limit switch
+    if(leftClimberSwitch.isPressed())
       climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
-    }
-
-    else {
+    else
       climber.setLeft(xbox.getLeftY());
-    }
 
-    // addresses stick drift
-    if (climber.getLeft() < .05 && climber.getLeft() > -.05) {
-      climber.setLeft(0);
-    }
-
-    if (!rightClimberLimitSwitch.get()) {
+    if(rightClimberSwitch.isPressed())
       climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
-    }
-
-    else {
+    else
       climber.setRight(xbox.getRightY());
-    }
 
-    // addresses stick drift
-    if (climber.getRight() < .05 && climber.getRight() > -.05) {
-      climber.setRight(0);
-    }
+    // X button controls the intake state
+    if(xbox.getXButton())
+      intake.down();
+    else if(xbox.getYButton())
+      intake.up();
 
-    // 'LB' turns the compressor on
-    if (xbox.getLeftBumper()) {
-      comp.enableDigital();
-    }
-    // 'RB' turns the compressor off
-    if (xbox.getRightBumper()) {
-      comp.disable();
-    }
-
-    // 'B' turns off the shooter
-    if (xbox.getBButton()) { 
-      shooter.off(); 
+    if(xbox.getStartButton())
+      hood.setPower(-.1);
+    else if(xbox.getBackButton())
+      hood.setPower(.1);
+    else
+      hood.setPower(0);
+    
+    // B is essentially an e-stop
+    if(xbox.getBButton()){
+      shooter.off();
+      elevator.off();
       climber.off();
+      turret.off();
+      hood.off();
     }
 
-    // Holding x activates the elevator
-    if(xbox.getXButton()){
-      elevator.on();
-    }
-    else {
-      elevator.updateElevator();
-    }
-
-    // Update the SmartDashboard
+    // Update anything that needs to update
     dashboard.printShooterRPM(shooter);
-
-    // 'Y' toggles the arm position
-    if(xbox.getYButton()){
-      Timer.delay(0.2); //This is debounce 
-      intake.toggleArms();
-    }
-
-    // Update the SmartDashboard
-    dashboard.printShooterRPM(shooter);
-    dashboard.printBallStatus(elevator);
+    shooter.updateCurrentPower();
   }
 }

@@ -1,7 +1,8 @@
-package frc.robot.subsystems;
+package frc.robot.misc_subclasses;
 
 // Imports
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.subsystems.*;
 
 // This object is used to handle SmartDashboard outputs
 public class Dashboard {
@@ -10,7 +11,7 @@ public class Dashboard {
 
     // Prints the rpm of a shooter object to a SmartDashboard
     public void printShooterRPM( Shooter shooter ) {
-        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotor().getEncoder().getVelocity()));
+        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotorRPM()));
     }
 
     // Prints the status of the elevator to the dashboard via two
@@ -28,8 +29,8 @@ public class Dashboard {
      */
     public void testShooterRPM( Shooter shooter ) {
         // Make temporary variables to shorten code
-        double topRPM = Math.round(shooter.getTopMotor().getEncoder().getVelocity());
-        double bottomRPM = Math.round(shooter.getBottomMotor().getEncoder().getVelocity());
+        double topRPM = Math.round(shooter.getTopMotorRPM());
+        double bottomRPM = Math.round(shooter.getBottomMotorRPM());
 
         // Logic to insure that we can test with only one motor
         if( topRPM == 0 && bottomRPM != 0 )

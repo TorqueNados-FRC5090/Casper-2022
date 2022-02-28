@@ -16,19 +16,28 @@ public class Elevator {
     private boolean topSensorHasBall;
 
     // Constructor 
-    public Elevator(int motorID) {
+    public Elevator(int motorID, int bottomSensorID, int topSensorID) {
         // Initialize variables
         motor = new CANSparkMax(motorID, MotorType.kBrushless);
-        bottomSensor = new AnalogInput(0);
-        topSensor = new AnalogInput(2);
+        motor.setInverted(true);
+
+        bottomSensor = new AnalogInput(bottomSensorID);
+        topSensor = new AnalogInput(topSensorID);
     }
 
     // Accessor methods
     public boolean topSensorHasBall() { return topSensorHasBall; }
     public boolean bottomSensorHasBall() { return bottomSensorHasBall; }
 
+    // Sets the motor to full speed
+    public void fullForward() { motor.set(1); }
+
+    // Sets the motor to full speed in reverse
+    public void fullBackward() { motor.set(-1); }
+
     // Turns on the motor 
-    public void on() { motor.set(0.5); }
+    public void set(double pwr) { motor.set(pwr); }
+
     // Turns off the motor
     public void off() { motor.set(0); }
 
@@ -53,17 +62,5 @@ public class Elevator {
             topSensorHasBall = true;
         else
             topSensorHasBall = false; 
-        
-        // Decides what to do for each of the possible sensor states
-        if(!bottomSensorHasBall && !topSensorHasBall)
-            on();
-        else if(bottomSensorHasBall && !topSensorHasBall) {
-            off();
-            // Tell dashboard: ready to prep
-        }
-        else {
-            off();
-            // Tell dashboard: ready to fire
-        }
     }
 }

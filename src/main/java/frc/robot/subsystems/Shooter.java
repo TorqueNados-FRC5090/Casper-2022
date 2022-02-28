@@ -11,12 +11,13 @@ public class Shooter {
     private CANSparkMax bottomMotor; // CCW
     private boolean shooterIsOn;
     private boolean locked;
+    private double currentPower;
   
   // Constructor method initiallizes variables used
   public Shooter( int topID, int bottomID) {
     // Initiallize top motor
     this.topMotor = new CANSparkMax(topID, MotorType.kBrushless);
-    
+
     // Initialize bottom motor
     // Bottom motor is inverted so that it will
     // always spin opposite to the top motor
@@ -30,30 +31,29 @@ public class Shooter {
   }
 
   // Accessor Methods (getters)
-  public CANSparkMax getTopMotor() { return this.topMotor; }
-  public CANSparkMax getBottomMotor() { return this.bottomMotor; }
-  public double getTopMotorRPM() { return this.topMotor.getEncoder().getVelocity(); }
-  public double getBottomMotorRPM() { return this.bottomMotor.getEncoder().getVelocity(); }
-  public boolean isOn() { return this.shooterIsOn; }
-  public boolean isLocked() { return this.locked; }
-  
+  public CANSparkMax getTopMotor() { return topMotor; }
+  public CANSparkMax getBottomMotor() { return bottomMotor; }
+  public double getTopMotorRPM() { return topMotor.getEncoder().getVelocity(); }
+  public double getBottomMotorRPM() { return bottomMotor.getEncoder().getVelocity(); }
+  public boolean isOn() { return shooterIsOn; }
+  public boolean isLocked() { return locked; }
+  public double currentPower() { return currentPower; }
+
+  // Makes sure that current power is accurate
+  public void updateCurrentPower() { currentPower = topMotor.get(); }
+
   // Tracks the power of the motor and
   // locks the power at the highest value detected
   public void setLock(boolean lock) { this.locked = lock; }
 
   // Sets shooter to specified power
   // Power is locked to [-1, 1]
-  public void setPower( double pwr ) {
+  public void set( double pwr ) {
     // If the lock is on and the desired power
     // is not greater than the current power,
     // the function immediately ends
-    if(this.locked) 
-      if(pwr <= topMotor.get())
-        return;
-
-    // Force pwr in bounds
-    if( pwr > 1 ) { pwr = 1; }
-    else if( pwr < -1 ) { pwr = -1; }
+    if(this.locked && pwr <= topMotor.get())
+      return; 
 
     // Set motors
     topMotor.set(pwr);
@@ -64,8 +64,18 @@ public class Shooter {
     else { shooterIsOn = true; }
   }
 
+  public void increasePowerBy(double pwr) {
+    currentPower = currentPower + pwr;
+    set(currentPower);
+  }
+
+  public void decreasePowerBy(double pwr) {
+    currentPower = currentPower - pwr;
+    set(currentPower);
+  }
+
   // Sets shooter to full power
-  public void fullTilt() {
+  public void fullPower() {
     topMotor.set(1);
     bottomMotor.set(1);
     shooterIsOn = true;
@@ -82,7 +92,7 @@ public class Shooter {
   // If shooter is on, this will turn it off
   public void toggle() {
     if( shooterIsOn ) { this.off(); }
-    else { this.fullTilt(); }
+    else { this.fullPower(); }
   }
 
   // If shooter is off, this will set it to
@@ -90,6 +100,6 @@ public class Shooter {
   // If shooter is on, this will turn it off
   public void toggle( double pwr ) {
     if( shooterIsOn ) { this.off(); }
-    else { this.setPower(pwr); }
+    else { this.set(pwr); }
   }
 }
