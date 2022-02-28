@@ -86,9 +86,9 @@ public class Robot extends TimedRobot {
 
     shooter = new Shooter(5, 9);
     shooterPID1 = new GenericPID(
-      shooter.getTopMotor(), CANSparkMax.ControlType.kVelocity, .0005);
+      shooter.getTopMotor(), CANSparkMax.ControlType.kVelocity, .0000802);
     shooterPID2 = new GenericPID(
-      shooter.getBottomMotor(), CANSparkMax.ControlType.kVelocity, .0005);
+      shooter.getBottomMotor(), CANSparkMax.ControlType.kVelocity, .0000802);
     
 
     hood = new Hood(15);
@@ -156,6 +156,12 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
+    shooterPID1.setDomain(-1000, 1000);
+    shooterPID1.setSetpoint(500);
+
+    shooterPID2.setDomain(-1000, 1000);
+    shooterPID2.setSetpoint(500);
+
     comp.enableDigital();
   }
 
@@ -206,7 +212,8 @@ public class Robot extends TimedRobot {
       elevator.fullForward();
 
     if(xbox.getLeftTriggerAxis() > 0) {
-        
+      shooterPID1.activate();
+      shooterPID2.activate();
     }
       
 
