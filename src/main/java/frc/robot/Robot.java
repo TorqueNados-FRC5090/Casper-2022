@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    comp.disable();
+    comp.enableDigital();
   }
 
   /** This function is called periodically during operator control. */
@@ -168,12 +168,14 @@ public class Robot extends TimedRobot {
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
+    else 
+      intake.motorOff();
 
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper())
-      turret.setPower(-.25);
+      turret.setPower(.2);
     else if(xbox.getRightBumper())
-      turret.setPower(.25);
+      turret.setPower(-.2);
     else 
       turret.off();
 
@@ -186,6 +188,7 @@ public class Robot extends TimedRobot {
         elevator.set(-.2);
         break;
       case 90: // RIGHT
+<<<<<<< HEAD
         shooterPID1.pause();
         shooterPID2.pause();
         shooter.increasePowerBy(.004);
@@ -194,6 +197,12 @@ public class Robot extends TimedRobot {
         shooterPID1.pause();
         shooterPID2.pause();
         shooter.decreasePowerBy(.004);
+=======
+        shooter.decreasePowerBy(.004);
+        break;
+      case 270: // LEFT
+        shooter.increasePowerBy(.004);
+>>>>>>> 324713abee919399ae1f6a74081fca2c4eaca6b7
         break;
       case -1: // NOT PRESSED
         elevator.off();
@@ -222,14 +231,22 @@ public class Robot extends TimedRobot {
 
     // X button controls the intake state
     if(xbox.getXButton())
-      intake.toggleArms();
+      intake.down();
+    else if(xbox.getYButton())
+      intake.up();
+
+    if(xbox.getStartButton())
+      hood.setPower(-.1);
+    else if(xbox.getBackButton())
+      hood.setPower(.1);
+    else
+      hood.setPower(0);
     
     // B is essentially an e-stop
     if(xbox.getBButton()){
       shooter.off();
       elevator.off();
       climber.off();
-      intake.motorOff();
       turret.off();
       hood.off();
       shooterPID1.pause();
