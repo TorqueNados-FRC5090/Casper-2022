@@ -188,7 +188,6 @@ public class Robot extends TimedRobot {
         elevator.set(-.2);
         break;
       case 90: // RIGHT
-<<<<<<< HEAD
         shooterPID1.pause();
         shooterPID2.pause();
         shooter.increasePowerBy(.004);
@@ -197,12 +196,6 @@ public class Robot extends TimedRobot {
         shooterPID1.pause();
         shooterPID2.pause();
         shooter.decreasePowerBy(.004);
-=======
-        shooter.decreasePowerBy(.004);
-        break;
-      case 270: // LEFT
-        shooter.increasePowerBy(.004);
->>>>>>> 324713abee919399ae1f6a74081fca2c4eaca6b7
         break;
       case -1: // NOT PRESSED
         elevator.off();
@@ -213,8 +206,7 @@ public class Robot extends TimedRobot {
       elevator.fullForward();
 
     if(xbox.getLeftTriggerAxis() > 0) {
-      shooterPID1.getController().setP(.1);
-      shooterPID1.getController().setReference(1000, CANSparkMax.ControlType.kVelocity);
+        
     }
       
 
