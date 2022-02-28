@@ -2,7 +2,6 @@ package frc.robot.wrappers;
 
 // Imports
 import com.revrobotics.SparkMaxPIDController;
-
 import com.revrobotics.CANSparkMax;
 
 public class GenericPID {
@@ -92,11 +91,13 @@ public class GenericPID {
 
     // Starts the PID controller
     public void activate() {
+        updatePID();
         controller.setReference(this.setpoint, this.controlType);
     }
-
     public void activate(double setpoint) {
-        controller.setReference(setpoint, this.controlType);
+        updatePID();
+        setSetpoint(setpoint);
+        controller.setReference(this.setpoint, this.controlType);
     }
 
     // Sets the PID gains to 0, without changing the stored values
