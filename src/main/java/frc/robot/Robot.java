@@ -205,7 +205,7 @@ public class Robot extends TimedRobot {
       elevator.fullForward();
 
     if(xbox.getLeftTriggerAxis() > 0) {
-      turretPID.activate(SmartDashboard.getNumber("set", 0) * 1.8055);
+      turretPID.activate(limelight.getRotationAngle());
     }
       
     // Climber cannot go further down after hitting limit switch
