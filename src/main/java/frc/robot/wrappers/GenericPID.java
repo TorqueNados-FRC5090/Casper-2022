@@ -72,9 +72,9 @@ public class GenericPID {
     public void setDomain(double min, double max) { this.min = min; this.max = max; setSetpoint(this.setpoint); }
     
     // Forces the setpoint in bounds when it is set
-    public void setSetpoint(double setpoint) {
-        this.setpoint = setpoint > max ? max : setpoint;
-        this.setpoint = setpoint < min ? min : setpoint;
+    public void setSetpoint(double set) {
+        this.setpoint = set < min ? min : 
+                      ( set > max ? max : set );
     }
 
     // Make sure that the PID gains match the object settings
