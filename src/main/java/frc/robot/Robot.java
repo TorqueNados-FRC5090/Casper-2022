@@ -245,8 +245,6 @@ public class Robot extends TimedRobot {
     // Update anything that needs to update
     dashboard.printShooterRPM(shooter);
     shooter.updateCurrentPower();
-    SmartDashboard.putNumber("posR", turretPID.getPosition());
-    SmartDashboard.putNumber("posD", turretPID.getPosition() / 1.8055);
-    SmartDashboard.putNumber("rpm", turretPID.getRPM());
+    dashboard.PIDtoDashboard(turretPID, "Turret");
   }
 }
