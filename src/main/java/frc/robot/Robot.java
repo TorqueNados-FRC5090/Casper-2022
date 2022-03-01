@@ -80,12 +80,12 @@ public class Robot extends TimedRobot {
     CameraServer.startAutomaticCapture();
     limelight = new Limelight();
 
-    turret = new Turret(5);
+    turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
     leftTurretSwitch = new LimitSwitch(4);
     rightTurretSwitch = new LimitSwitch(5);
 
-    shooter = new Shooter(-1, 9);    
+    shooter = new Shooter(5, 9);    
 
     hood = new Hood(15);
     hoodZeroSwitch = new LimitSwitch(6);
