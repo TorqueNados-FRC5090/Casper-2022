@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    turretPID.setDomain(45 * 1.8055, 45 * 1.8055);
+    turretPID.setDomain(-45 * 1.8055, 45 * 1.8055);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
@@ -245,6 +245,7 @@ public class Robot extends TimedRobot {
     // Update anything that needs to update
     dashboard.printShooterRPM(shooter);
     shooter.updateCurrentPower();
+    dashboard.printTurretDegrees(turret);
     dashboard.PIDtoDashboard(turretPID, "Turret");
   }
 }

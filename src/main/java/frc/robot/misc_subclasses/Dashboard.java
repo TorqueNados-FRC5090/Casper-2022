@@ -16,8 +16,8 @@ public class Dashboard {
     }
 
     // Prints the current position of a turret
-    public void printTurretPos(Turret turret) {
-        SmartDashboard.putNumber("TurretPos", turret.getPosition());
+    public void printTurretDegrees(Turret turret) {
+        SmartDashboard.putNumber("TurretPos", turret.getPosition() / 1.8055);
     }
 
     // Prints relevant data from a PID controller. If a value is manually 
