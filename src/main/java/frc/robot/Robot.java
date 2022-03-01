@@ -8,10 +8,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.GenericPID;
 import frc.robot.wrappers.LimitSwitch;
-
-import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ControlType;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftTurretSwitch;
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
-  private GenericPID shooterPID1, shooterPID2;
+  private GenericPID turretPID;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -81,15 +81,11 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
     leftTurretSwitch = new LimitSwitch(4);
     rightTurretSwitch = new LimitSwitch(5);
 
-    shooter = new Shooter(5, 9);
-    shooterPID1 = new GenericPID(
-      shooter.getTopMotor(), CANSparkMax.ControlType.kVelocity, .0000802);
-    shooterPID2 = new GenericPID(
-      shooter.getBottomMotor(), CANSparkMax.ControlType.kVelocity, .0000802);
-    
+    shooter = new Shooter(5, 9);    
 
     hood = new Hood(15);
     hoodZeroSwitch = new LimitSwitch(6);
@@ -156,11 +152,8 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    shooterPID1.setDomain(-1000, 1000);
-    shooterPID1.setSetpoint(500);
-
-    shooterPID2.setDomain(-1000, 1000);
-    shooterPID2.setSetpoint(500);
+    turretPID.setDomain(45 * 1.8055, 45 * 1.8055);
+    turretPID.setSetpoint(0);
 
     comp.enableDigital();
   }
@@ -178,11 +171,15 @@ public class Robot extends TimedRobot {
       intake.motorOff();
 
     // Manually control the turret with bumpers
-    if(xbox.getLeftBumper())
+    if(xbox.getLeftBumper()) {
+      turretPID.pause();
       turret.setPower(.2);
-    else if(xbox.getRightBumper())
+    }
+    else if(xbox.getRightBumper()) {
+      turretPID.pause();
       turret.setPower(-.2);
-    else 
+    }
+    else if(turretPID.getP() == 0)
       turret.off();
 
     // Dpad controls
@@ -194,13 +191,9 @@ public class Robot extends TimedRobot {
         elevator.set(-.2);
         break;
       case 90: // RIGHT
-        shooterPID1.pause();
-        shooterPID2.pause();
         shooter.increasePowerBy(.004);
         break;
       case 270: // LEFT
-        shooterPID1.pause();
-        shooterPID2.pause();
         shooter.decreasePowerBy(.004);
         break;
       case -1: // NOT PRESSED
@@ -212,11 +205,9 @@ public class Robot extends TimedRobot {
       elevator.fullForward();
 
     if(xbox.getLeftTriggerAxis() > 0) {
-      shooterPID1.activate();
-      shooterPID2.activate();
+      turretPID.activate(SmartDashboard.getNumber("set", 0) * 1.8055);
     }
       
-
     // Climber cannot go further down after hitting limit switch
     if(leftClimberSwitch.isPressed())
       climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
@@ -248,12 +239,14 @@ public class Robot extends TimedRobot {
       climber.off();
       turret.off();
       hood.off();
-      shooterPID1.pause();
-      shooterPID2.pause();
+      turretPID.pause();
     }
 
     // Update anything that needs to update
     dashboard.printShooterRPM(shooter);
     shooter.updateCurrentPower();
+    SmartDashboard.putNumber("posR", turretPID.getPosition());
+    SmartDashboard.putNumber("posD", turretPID.getPosition() / 1.8055);
+    SmartDashboard.putNumber("rpm", turretPID.getRPM());
   }
 }
