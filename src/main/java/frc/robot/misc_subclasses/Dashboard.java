@@ -17,7 +17,7 @@ public class Dashboard {
 
     // Prints the current position of a turret
     public void printTurretDegrees(Turret turret) {
-        SmartDashboard.putNumber("TurretPos", turret.getPosition() / 1.8055);
+        SmartDashboard.putNumber("TurretPos", turret.getPosition() / 2.373737);
     }
 
     // Prints the current position of a target relative to limelight

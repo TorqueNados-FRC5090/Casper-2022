@@ -150,9 +150,9 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     // if (m_autonomousCommand != null) {
     // m_autonomousCommand.cancel();
-    // }
+    // 1.80
 
-    turretPID.setDomain(-45 * 1.8055, 45 * 1.8055);
+    turretPID.setDomain(-45 * 2.373737, 45 * 2.373737);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
@@ -205,7 +205,7 @@ public class Robot extends TimedRobot {
       elevator.fullForward();
 
     if(xbox.getLeftTriggerAxis() > 0) {
-      turretPID.activate(limelight.getRotationAngle());
+      turretPID.activate();
     }
       
     // Climber cannot go further down after hitting limit switch
