@@ -20,6 +20,12 @@ public class Dashboard {
         SmartDashboard.putNumber("TurretPos", turret.getPosition() / 1.8055);
     }
 
+    // Prints the current position of a target relative to limelight
+    public void printLimelightData(Limelight limelight) {
+        SmartDashboard.putNumber("Distance from Target", limelight.getDistance());
+        SmartDashboard.putNumber("Rotational Angle to Target", limelight.getRotationAngle());
+    }
+
     // Prints relevant data from a PID controller. If a value is manually 
     // input into the dashboard, the pid setpoint will update accordingly
     public void PIDtoDashboard(GenericPID pid, int id) {

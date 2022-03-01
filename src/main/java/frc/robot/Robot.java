@@ -243,9 +243,11 @@ public class Robot extends TimedRobot {
     }
 
     // Update anything that needs to update
-    dashboard.printShooterRPM(shooter);
     shooter.updateCurrentPower();
+    dashboard.printShooterRPM(shooter);
     dashboard.printTurretDegrees(turret);
     dashboard.PIDtoDashboard(turretPID, "Turret");
+    limelight.updateLimelightTracking();
+    dashboard.printLimelightData(limelight);
   }
 }
