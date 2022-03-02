@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.GenericPID;
 import frc.robot.wrappers.LimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
@@ -28,7 +27,8 @@ import frc.robot.subsystems.Climber;
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.misc_subclasses.Dashboard;
-import frc.robot.misc_subclasses.Limelight; 
+import frc.robot.misc_subclasses.Limelight;
+import static frc.robot.Constants.*; 
 
 
 
@@ -150,9 +150,9 @@ public class Robot extends TimedRobot {
     // this line or comment it out.
     // if (m_autonomousCommand != null) {
     // m_autonomousCommand.cancel();
-    // 1.80
+    // }
 
-    turretPID.setDomain(-45 * 2.373737, 45 * 2.373737);
+    turretPID.setDomain(-45 * TURRET_RATIO, 45 * TURRET_RATIO);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
@@ -205,7 +205,8 @@ public class Robot extends TimedRobot {
       elevator.fullForward();
 
     if(xbox.getLeftTriggerAxis() > 0) {
-      turretPID.activate();
+      turretPID.activate(
+        (turret.getPosition() - limelight.getRotationAngle()) * TURRET_RATIO );
     }
       
     // Climber cannot go further down after hitting limit switch

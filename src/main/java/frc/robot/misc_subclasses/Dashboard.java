@@ -4,6 +4,7 @@ package frc.robot.misc_subclasses;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.*;
 import frc.robot.wrappers.GenericPID;
+import static frc.robot.Constants.*;
 
 // This object is used to handle SmartDashboard outputs
 public class Dashboard {
@@ -15,9 +16,9 @@ public class Dashboard {
         SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotorRPM()));
     }
 
-    // Prints the current position of a turret
+    // Prints the current position of a turret in degrees
     public void printTurretDegrees(Turret turret) {
-        SmartDashboard.putNumber("TurretPos", turret.getPosition() / 2.373737);
+        SmartDashboard.putNumber("TurretPos", turret.getPosition() / TURRET_RATIO);
     }
 
     // Prints the current position of a target relative to limelight
