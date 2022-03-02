@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    turretPID.setDomain(-45 * TURRET_RATIO, 45 * TURRET_RATIO);
+    turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
