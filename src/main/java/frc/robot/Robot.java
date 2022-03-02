@@ -8,7 +8,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import frc.robot.wrappers.GenericPID;
 import frc.robot.wrappers.LimitSwitch;
+import com.revrobotics.CANSparkMax.ControlType;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
@@ -25,7 +27,8 @@ import frc.robot.subsystems.Climber;
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.robot.misc_subclasses.Dashboard;
-import frc.robot.misc_subclasses.Limelight; 
+import frc.robot.misc_subclasses.Limelight;
+import static frc.robot.Constants.*; 
 
 
 
@@ -60,6 +63,7 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftTurretSwitch;
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
+  private GenericPID turretPID;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -77,10 +81,11 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
     leftTurretSwitch = new LimitSwitch(4);
     rightTurretSwitch = new LimitSwitch(5);
 
-    shooter = new Shooter(5, 9);
+    shooter = new Shooter(5, 9);    
 
     hood = new Hood(15);
     hoodZeroSwitch = new LimitSwitch(6);
@@ -147,6 +152,9 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
+    turretPID.setDomain(-45 * TURRET_RATIO, 45 * TURRET_RATIO);
+    turretPID.setSetpoint(0);
+
     comp.enableDigital();
   }
 
@@ -163,11 +171,15 @@ public class Robot extends TimedRobot {
       intake.motorOff();
 
     // Manually control the turret with bumpers
-    if(xbox.getLeftBumper())
+    if(xbox.getLeftBumper()) {
+      turretPID.pause();
       turret.setPower(.2);
-    else if(xbox.getRightBumper())
+    }
+    else if(xbox.getRightBumper()) {
+      turretPID.pause();
       turret.setPower(-.2);
-    else 
+    }
+    else if(turretPID.getP() == 0)
       turret.off();
 
     // Dpad controls
@@ -179,10 +191,10 @@ public class Robot extends TimedRobot {
         elevator.set(-.2);
         break;
       case 90: // RIGHT
-        shooter.decreasePowerBy(.004);
+        shooter.increasePowerBy(.004);
         break;
       case 270: // LEFT
-        shooter.increasePowerBy(.004);
+        shooter.decreasePowerBy(.004);
         break;
       case -1: // NOT PRESSED
         elevator.off();
@@ -192,6 +204,11 @@ public class Robot extends TimedRobot {
     if(xbox.getRightTriggerAxis() > 0)
       elevator.fullForward();
 
+    if(xbox.getLeftTriggerAxis() > 0) {
+      turretPID.activate(
+        (turret.getPosition() - limelight.getRotationAngle()) * TURRET_RATIO );
+    }
+      
     // Climber cannot go further down after hitting limit switch
     if(leftClimberSwitch.isPressed())
       climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
@@ -223,10 +240,15 @@ public class Robot extends TimedRobot {
       climber.off();
       turret.off();
       hood.off();
+      turretPID.pause();
     }
 
     // Update anything that needs to update
-    dashboard.printShooterRPM(shooter);
     shooter.updateCurrentPower();
+    dashboard.printShooterRPM(shooter);
+    dashboard.printTurretDegrees(turret);
+    dashboard.PIDtoDashboard(turretPID, "Turret");
+    limelight.updateLimelightTracking();
+    dashboard.printLimelightData(limelight);
   }
 }

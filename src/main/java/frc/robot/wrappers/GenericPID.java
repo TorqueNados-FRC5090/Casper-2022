@@ -61,15 +61,20 @@ public class GenericPID {
     public void setP(double P) { this.P = P; controller.setP(P); }
     public void setI(double I) { this.I = I; controller.setI(I); }
     public void setD(double D) { this.D = D; controller.setD(D); }
+    public void setPID(double P, double I, double D) { 
+        this.P = P; controller.setP(P);
+        this.I = I; controller.setI(I);
+        this.D = D; controller.setD(D); 
+    }
     public void setControlType(CANSparkMax.ControlType controlType) { this.controlType = controlType; }
-    public void setMax(double min) { this.min = min; setSetpoint(this.setpoint); }
-    public void setMin(double max) { this.max = max; setSetpoint(this.setpoint); }
-    public void setDomain(double min, double max) { this.min = min; this.max = max; }
+    public void setMin(double min) { this.min = min; setSetpoint(this.setpoint); }
+    public void setMax(double max) { this.max = max; setSetpoint(this.setpoint); }
+    public void setDomain(double min, double max) { this.min = min; this.max = max; setSetpoint(this.setpoint); }
     
     // Forces the setpoint in bounds when it is set
-    public void setSetpoint(double setpoint) {
-        this.setpoint = setpoint > max ? max : setpoint;
-        this.setpoint = setpoint > min ? min : setpoint;
+    public void setSetpoint(double set) {
+        this.setpoint = set < min ? min : 
+                      ( set > max ? max : set );
     }
 
     // Make sure that the PID gains match the object settings
@@ -86,7 +91,13 @@ public class GenericPID {
 
     // Starts the PID controller
     public void activate() {
-        controller.setReference(setpoint, controlType);
+        updatePID();
+        controller.setReference(this.setpoint, this.controlType);
+    }
+    public void activate(double setpoint) {
+        updatePID();
+        setSetpoint(setpoint);
+        controller.setReference(this.setpoint, this.controlType);
     }
 
     // Sets the PID gains to 0, without changing the stored values
