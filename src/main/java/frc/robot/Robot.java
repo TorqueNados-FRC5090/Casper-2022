@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import frc.robot.wrappers.LimitSwitch;
 
 // Camera imports
@@ -24,6 +25,7 @@ import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.misc_subclasses.Dashboard;
 import frc.robot.misc_subclasses.Limelight; 
 
@@ -60,6 +62,8 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftTurretSwitch;
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
+  private Timer autonTimer;
+  private MotorControllerGroup autonbingus;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -72,6 +76,7 @@ public class Robot extends TimedRobot {
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
+    autonbingus = drivetrain.getAllMotors();
 
     CameraServer.startAutomaticCapture();
     limelight = new Limelight();
@@ -95,6 +100,8 @@ public class Robot extends TimedRobot {
     rightClimberSwitch = new LimitSwitch(3);
 
     dashboard = new Dashboard();
+
+    autonTimer.start();
   }
 
   @Override
@@ -126,6 +133,8 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    shooter.set(3625);
+    autonTimer.start();
    // m_autoSelected = m_chooser.getSelected();
     // // schedule the autonomous command (example)
     // if (m_autonomousCommand != null) {
@@ -135,8 +144,20 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() { }
+  public void autonomousPeriodic() { 
 
+
+    if (autonTimer.hasElapsed(5) && !autonTimer.hasElapsed(8)) {
+      elevator.set(1);
+    }
+    if (autonTimer.hasElapsed(10) && !autonTimer.hasElapsed(15)) {
+      autonbingus.set(.2);
+      elevator.set(0);
+      shooter.set(0);
+    }
+
+  }
+  
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
@@ -146,7 +167,7 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     // m_autonomousCommand.cancel();
     // }
-
+    autonbingus.set(0);
     comp.enableDigital();
   }
 
