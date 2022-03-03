@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
     // m_autonomousCommand.cancel();
     // }
 
-    turretPID.setDomain(-45 * TURRET_RATIO, 45 * TURRET_RATIO);
+    turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
@@ -206,19 +206,23 @@ public class Robot extends TimedRobot {
 
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
-        (turret.getPosition() - limelight.getRotationAngle()) * TURRET_RATIO );
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
     }
       
     // Climber cannot go further down after hitting limit switch
     if(leftClimberSwitch.isPressed())
       climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
-    else
+    else if(xbox.getLeftY() > .05 || xbox.getLeftY() < -.05 )
       climber.setLeft(xbox.getLeftY());
+    else
+      climber.setLeft(0);
 
     if(rightClimberSwitch.isPressed())
       climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
-    else
+    else if(xbox.getRightY() > .05 || xbox.getRightY() < -.05 )
       climber.setRight(xbox.getRightY());
+    else
+      climber.setRight(0);
 
     // X button controls the intake state
     if(xbox.getXButton())
