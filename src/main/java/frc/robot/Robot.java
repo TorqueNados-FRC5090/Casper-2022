@@ -67,7 +67,8 @@ public class Robot extends TimedRobot {
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
   private GenericPID turretPID;
-  private Timer autonTimer;
+  //private Timer autonTimer;
+  private double autoStartTime = Timer.getFPGATimestamp();
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -141,26 +142,34 @@ public class Robot extends TimedRobot {
     // // schedule the autonomous command (example)
     // if (m_autonomousCommand != null) {
       
-      autonTimer.start();
+      //autonTimer.start();
     // m_autonomousCommand.schedule();
     // }
+    autoStartTime = Timer.getFPGATimestamp();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() { 
 
-    if((autonTimer.get() > 2) && autonTimer.get() < 10)
-     shooter.set(.5);
+    if((Timer.getFPGATimestamp() - autoStartTime > 2) && Timer.getFPGATimestamp() - autoStartTime < 10)
+     shooter.set(-.55);
 
-    if (autonTimer.get() > 5 && autonTimer.get() < 10) {
+    if (Timer.getFPGATimestamp() - autoStartTime > 5 && Timer.getFPGATimestamp() - autoStartTime < 10) {
       elevator.set(1);
     }
-    if (autonTimer.get() > 10 && autonTimer.get() < 14) {
-      ((MotorController) m_myRobot).set(-.1);
+    if (Timer.getFPGATimestamp() - autoStartTime > 10 && Timer.getFPGATimestamp() - autoStartTime < 11.5) {
+      //((MotorController) m_myRobot).set(-.1);
+      //m_myRobot.arcadeDrive(-0.5, 0.5);
+      drivetrain.getLeftMotorGroup().set(0.35);
+      drivetrain.getRightMotorGroup().set(-0.35);
       elevator.set(0);
       shooter.set(0);
     } 
+    if (Timer.getFPGATimestamp() - autoStartTime > 11.5) {
+      drivetrain.getLeftMotorGroup().set(0);
+      drivetrain.getRightMotorGroup().set(0);
+    }
 
   }
   
@@ -189,7 +198,7 @@ public class Robot extends TimedRobot {
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
-    else if(joystick.getRawButton(0))
+    else if(joystick.getRawButton(2))
       intake.set(-1);
     else
       intake.motorOff();
