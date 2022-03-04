@@ -42,7 +42,5 @@ public class Drivetrain {
     public MotorControllerGroup getRightMotorGroup() { return this.rightMotors; }
     public MotorControllerGroup getLeftMotorGroup() { return this.leftMotors; }
 
-    public MotorControllerGroup getAllMotors() {
-        return new MotorControllerGroup(FLMotor, FRMotor, RLMotor, RRMotor);
-    }
 }
+

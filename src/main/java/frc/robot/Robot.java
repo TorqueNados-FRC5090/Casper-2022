@@ -64,7 +64,6 @@ public class Robot extends TimedRobot {
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
   private Timer autonTimer;
-  private MotorControllerGroup autonbingus;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -77,7 +76,6 @@ public class Robot extends TimedRobot {
     drivetrain = new Drivetrain(7, 3, 6, 2);
     m_myRobot = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
-    autonbingus = drivetrain.getAllMotors();
 
     CameraServer.startAutomaticCapture();
     limelight = new Limelight();
@@ -146,17 +144,17 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() { 
 
-    if(autonTimer.hasElapsed(1) && !autonTimer.hasElapsed(15))
+    if(autonTimer.hasElapsed(1) && !autonTimer.hasElapsed(10))
      shooter.set(.5);
 
     if (autonTimer.hasElapsed(5) && !autonTimer.hasElapsed(8)) {
       elevator.set(1);
     }
-    if (autonTimer.hasElapsed(10)) {
+    if (autonTimer.hasElapsed(10) && !autonTimer.hasElapsed(15)) {
       ((MotorController) m_myRobot).set(.2);
       elevator.set(0);
       shooter.set(0);
-    }
+    } 
 
   }
   
@@ -176,6 +174,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
+    if (autonTimer.hasElapsed(15))
     m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
