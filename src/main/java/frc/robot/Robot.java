@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import frc.robot.wrappers.LimitSwitch;
 
@@ -133,7 +134,6 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    shooter.set(3625);
     autonTimer.start();
    // m_autoSelected = m_chooser.getSelected();
     // // schedule the autonomous command (example)
@@ -146,12 +146,14 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() { 
 
+    if(autonTimer.hasElapsed(1) && !autonTimer.hasElapsed(15))
+     shooter.set(.5);
 
     if (autonTimer.hasElapsed(5) && !autonTimer.hasElapsed(8)) {
       elevator.set(1);
     }
-    if (autonTimer.hasElapsed(10) && !autonTimer.hasElapsed(15)) {
-      autonbingus.set(.2);
+    if (autonTimer.hasElapsed(10)) {
+      ((MotorController) m_myRobot).set(.2);
       elevator.set(0);
       shooter.set(0);
     }
@@ -167,7 +169,6 @@ public class Robot extends TimedRobot {
     // if (m_autonomousCommand != null) {
     // m_autonomousCommand.cancel();
     // }
-    autonbingus.set(0);
     comp.enableDigital();
   }
 
