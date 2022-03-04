@@ -156,7 +156,7 @@ public class Robot extends TimedRobot {
       elevator.set(1);
     }
     if (autonTimer.hasElapsed(10) && !autonTimer.hasElapsed(15)) {
-      ((MotorController) m_myRobot).set(.2);
+      ((MotorController) m_myRobot).set(-.2);
       elevator.set(0);
       shooter.set(0);
     } 
