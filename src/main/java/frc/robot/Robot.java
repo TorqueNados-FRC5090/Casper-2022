@@ -171,6 +171,9 @@ public class Robot extends TimedRobot {
       drivetrain.getRightMotorGroup().set(0);
     }
 
+    if (Timer.getFPGATimestamp() - autoStartTime > 12)
+    intake.down();
+
   }
   
   @Override
