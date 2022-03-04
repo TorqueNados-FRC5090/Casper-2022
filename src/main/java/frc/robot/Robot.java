@@ -167,7 +167,9 @@ public class Robot extends TimedRobot {
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
-    else 
+    else if(joystick.getRawButton(1))
+      intake.set(-1);
+    else
       intake.motorOff();
 
     // Manually control the turret with bumpers
