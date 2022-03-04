@@ -9,6 +9,8 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.wrappers.GenericPID;
+import edu.wpi.first.wpilibj.motorcontrol.MotorController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import frc.robot.wrappers.LimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 
@@ -26,6 +28,7 @@ import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.misc_subclasses.Dashboard;
 import frc.robot.misc_subclasses.Limelight;
 import static frc.robot.Constants.*; 
@@ -64,6 +67,7 @@ public class Robot extends TimedRobot {
   private LimitSwitch rightTurretSwitch;
   private LimitSwitch hoodZeroSwitch;
   private GenericPID turretPID;
+  private Timer autonTimer;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -100,6 +104,8 @@ public class Robot extends TimedRobot {
     rightClimberSwitch = new LimitSwitch(3);
 
     dashboard = new Dashboard();
+
+    autonTimer.start();
   }
 
   @Override
@@ -131,6 +137,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
+    autonTimer.start();
    // m_autoSelected = m_chooser.getSelected();
     // // schedule the autonomous command (example)
     // if (m_autonomousCommand != null) {
@@ -140,8 +147,22 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() { }
+  public void autonomousPeriodic() { 
 
+    if(autonTimer.hasElapsed(1) && !autonTimer.hasElapsed(10))
+     shooter.set(.5);
+
+    if (autonTimer.hasElapsed(5) && !autonTimer.hasElapsed(8)) {
+      elevator.set(1);
+    }
+    if (autonTimer.hasElapsed(10) && !autonTimer.hasElapsed(15)) {
+      ((MotorController) m_myRobot).set(.2);
+      elevator.set(0);
+      shooter.set(0);
+    } 
+
+  }
+  
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
@@ -162,6 +183,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
+    if (autonTimer.hasElapsed(15))
     m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
