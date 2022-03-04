@@ -105,7 +105,6 @@ public class Robot extends TimedRobot {
 
     dashboard = new Dashboard();
 
-    autonTimer.start();
   }
 
   @Override
@@ -137,10 +136,12 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-    autonTimer.start();
+   // autonTimer.start();
    // m_autoSelected = m_chooser.getSelected();
     // // schedule the autonomous command (example)
     // if (m_autonomousCommand != null) {
+      
+      autonTimer.start();
     // m_autonomousCommand.schedule();
     // }
   }
@@ -149,14 +150,14 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() { 
 
-    if(autonTimer.hasElapsed(1) && !autonTimer.hasElapsed(10))
+    if((autonTimer.get() > 2) && autonTimer.get() < 10)
      shooter.set(.5);
 
-    if (autonTimer.hasElapsed(5) && !autonTimer.hasElapsed(8)) {
+    if (autonTimer.get() > 5 && autonTimer.get() < 10) {
       elevator.set(1);
     }
-    if (autonTimer.hasElapsed(10) && !autonTimer.hasElapsed(15)) {
-      ((MotorController) m_myRobot).set(-.2);
+    if (autonTimer.get() > 10 && autonTimer.get() < 14) {
+      ((MotorController) m_myRobot).set(-.1);
       elevator.set(0);
       shooter.set(0);
     } 
@@ -183,7 +184,6 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    if (autonTimer.hasElapsed(15))
     m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
@@ -197,11 +197,11 @@ public class Robot extends TimedRobot {
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper()) {
       turretPID.pause();
-      turret.setPower(.2);
+      turret.setPower(.3);
     }
     else if(xbox.getRightBumper()) {
       turretPID.pause();
-      turret.setPower(-.2);
+      turret.setPower(-.3);
     }
     else if(turretPID.getP() == 0)
       turret.off();
@@ -209,10 +209,10 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        elevator.set(.2);
+        elevator.set(.3);
         break;
       case 180: // DOWN
-        elevator.set(-.2);
+        elevator.set(-.3);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -236,14 +236,14 @@ public class Robot extends TimedRobot {
     // Climber cannot go further down after hitting limit switch
     if(leftClimberSwitch.isPressed())
       climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
-    else if(xbox.getLeftY() > .05 || xbox.getLeftY() < -.05 )
+    else if(xbox.getLeftY() > .09 || xbox.getLeftY() < -.09 )
       climber.setLeft(xbox.getLeftY());
     else
       climber.setLeft(0);
 
     if(rightClimberSwitch.isPressed())
       climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
-    else if(xbox.getRightY() > .05 || xbox.getRightY() < -.05 )
+    else if(xbox.getRightY() > .09 || xbox.getRightY() < -.09 )
       climber.setRight(xbox.getRightY());
     else
       climber.setRight(0);
@@ -261,6 +261,15 @@ public class Robot extends TimedRobot {
     else
       hood.setPower(0);
     
+    if(xbox.getLeftStickButton()) {
+      shooter.set(-.65);
+    }
+
+    if(xbox.getRightStickButton()) {
+      shooter.set(-.3);
+    }
+
+
     // B is essentially an e-stop
     if(xbox.getBButton()){
       shooter.off();
