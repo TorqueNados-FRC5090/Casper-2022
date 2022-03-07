@@ -26,6 +26,7 @@ import frc.robot.subsystems.Climber;
 
 // Misc imports
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import frc.robot.misc_subclasses.Dashboard;
 import frc.robot.misc_subclasses.Limelight;
 import static frc.robot.Constants.*; 
@@ -56,14 +57,12 @@ public class Robot extends TimedRobot {
   private Hood hood;
 
   // Misc variables/objects
-  private DifferentialDrive m_myRobot;
+  private DifferentialDrive robotDrive;
   private Compressor comp;
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
-  private LimitSwitch leftTurretSwitch;
-  private LimitSwitch rightTurretSwitch;
-  private LimitSwitch hoodZeroSwitch;
   private GenericPID turretPID;
+  private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -74,7 +73,7 @@ public class Robot extends TimedRobot {
     xbox  = new XboxController(1);
   
     drivetrain = new Drivetrain(7, 3, 6, 2);
-    m_myRobot = new DifferentialDrive(
+    robotDrive = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
 
     CameraServer.startAutomaticCapture();
@@ -82,13 +81,10 @@ public class Robot extends TimedRobot {
 
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
-    leftTurretSwitch = new LimitSwitch(4);
-    rightTurretSwitch = new LimitSwitch(5);
 
     shooter = new Shooter(5, 9);    
 
     hood = new Hood(15);
-    hoodZeroSwitch = new LimitSwitch(6);
 
     elevator = new Elevator(13, 0, 1);
 
@@ -100,57 +96,47 @@ public class Robot extends TimedRobot {
     rightClimberSwitch = new LimitSwitch(3);
 
     dashboard = new Dashboard();
+
   }
 
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    //CommandScheduler.getInstance().run();
-  }
-
-  // This function is called once each time the robot enters Disabled mode.
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-  }
-
-  /** 
-   * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
-   */
+  // This function is called once at the start of auton
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-   // m_autoSelected = m_chooser.getSelected();
-    // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-    // m_autonomousCommand.schedule();
-    // }
+    autonStartTime = Timer.getFPGATimestamp();
   }
 
-  /** This function is called periodically during autonomous. */
+  // This function is called every 20ms during auton
   @Override
-  public void autonomousPeriodic() { }
+  public void autonomousPeriodic() { 
+    double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
+    if((currentTime > 2) && currentTime < 10)
+     shooter.set(-.55);
+
+    if(currentTime > 5 && currentTime < 10) {
+      elevator.set(1);
+    }
+
+    if(currentTime > 10 && currentTime < 11.5) {
+      drivetrain.getLeftMotorGroup().set(0.35);
+      drivetrain.getRightMotorGroup().set(-0.35);
+      elevator.off();
+      shooter.off();
+    } 
+
+    if(currentTime > 11.5) {
+      drivetrain.getLeftMotorGroup().set(0);
+      drivetrain.getRightMotorGroup().set(0);
+    }
+
+    if(currentTime > 12)
+    intake.down();
+
+  }
+  
+  // This function is called once at the start of teleop
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    // if (m_autonomousCommand != null) {
-    // m_autonomousCommand.cancel();
-    // }
 
     turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
@@ -158,16 +144,16 @@ public class Robot extends TimedRobot {
     comp.enableDigital();
   }
 
-  /** This function is called periodically during operator control. */
+  // This function is called every 20ms during teleop
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
+    robotDrive.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
-    else if(joystick.getRawButton(1))
+    else if(joystick.getRawButton(2))
       intake.set(-1);
     else
       intake.motorOff();
@@ -175,11 +161,11 @@ public class Robot extends TimedRobot {
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper()) {
       turretPID.pause();
-      turret.setPower(.2);
+      turret.setPower(.3);
     }
     else if(xbox.getRightBumper()) {
       turretPID.pause();
-      turret.setPower(-.2);
+      turret.setPower(-.3);
     }
     else if(turretPID.getP() == 0)
       turret.off();
@@ -187,10 +173,10 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        elevator.set(.2);
+        elevator.set(.3);
         break;
       case 180: // DOWN
-        elevator.set(-.2);
+        elevator.set(-.3);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -214,14 +200,14 @@ public class Robot extends TimedRobot {
     // Climber cannot go further down after hitting limit switch
     if(leftClimberSwitch.isPressed())
       climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
-    else if(xbox.getLeftY() > .05 || xbox.getLeftY() < -.05 )
+    else if(xbox.getLeftY() > .09 || xbox.getLeftY() < -.09 )
       climber.setLeft(xbox.getLeftY());
     else
       climber.setLeft(0);
 
     if(rightClimberSwitch.isPressed())
       climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
-    else if(xbox.getRightY() > .05 || xbox.getRightY() < -.05 )
+    else if(xbox.getRightY() > .09 || xbox.getRightY() < -.09 )
       climber.setRight(xbox.getRightY());
     else
       climber.setRight(0);
@@ -239,6 +225,17 @@ public class Robot extends TimedRobot {
     else
       hood.setPower(0);
     
+    // preset motor value to shoot ball
+    if(xbox.getLeftStickButton()) {
+      shooter.set(-.65);
+    }
+
+    // preset motor value to shoot ball at low speed (reject ball)
+    if(xbox.getRightStickButton()) {
+      shooter.set(-.3);
+    }
+
+
     // B is essentially an e-stop
     if(xbox.getBButton()){
       shooter.off();
