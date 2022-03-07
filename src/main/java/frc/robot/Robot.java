@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
   private Hood hood;
 
   // Misc variables/objects
-  private DifferentialDrive m_myRobot;
+  private DifferentialDrive robotDrive;
   private Compressor comp;
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
     xbox  = new XboxController(1);
   
     drivetrain = new Drivetrain(7, 3, 6, 2);
-    m_myRobot = new DifferentialDrive(
+    robotDrive = new DifferentialDrive(
       drivetrain.getLeftMotorGroup(), drivetrain.getRightMotorGroup());
 
     CameraServer.startAutomaticCapture();
@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
     if(currentTime > 5 && currentTime < 10) {
       elevator.set(1);
     }
-    
+
     if(currentTime > 10 && currentTime < 11.5) {
       drivetrain.getLeftMotorGroup().set(0.35);
       drivetrain.getRightMotorGroup().set(-0.35);
@@ -148,7 +148,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    m_myRobot.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
+    robotDrive.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
     if(joystick.getTrigger())
