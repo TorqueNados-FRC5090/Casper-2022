@@ -9,8 +9,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.wrappers.GenericPID;
-import edu.wpi.first.wpilibj.motorcontrol.MotorController;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import frc.robot.wrappers.LimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 
@@ -63,9 +61,6 @@ public class Robot extends TimedRobot {
   private Compressor comp;
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
-  private LimitSwitch leftTurretSwitch;
-  private LimitSwitch rightTurretSwitch;
-  private LimitSwitch hoodZeroSwitch;
   private GenericPID turretPID;
   //private Timer autonTimer;
   private double autoStartTime = Timer.getFPGATimestamp();
@@ -87,13 +82,10 @@ public class Robot extends TimedRobot {
 
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
-    leftTurretSwitch = new LimitSwitch(4);
-    rightTurretSwitch = new LimitSwitch(5);
 
     shooter = new Shooter(5, 9);    
 
     hood = new Hood(15);
-    hoodZeroSwitch = new LimitSwitch(6);
 
     elevator = new Elevator(13, 0, 1);
 
