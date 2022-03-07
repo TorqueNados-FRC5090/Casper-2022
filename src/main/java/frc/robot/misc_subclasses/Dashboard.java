@@ -11,9 +11,17 @@ public class Dashboard {
     // Constructor method
     public Dashboard() {}
 
-    // Prints the rpm of a shooter object to a SmartDashboard
-    public void printShooterRPM(Shooter shooter) {
-        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getTopMotorRPM()));
+    // Prints the rpm of the shooter, even when only one motor is being run
+    public void printShooterRPM( Shooter shooter ) {
+        // Make temporary variables to shorten code
+        double topRPM = Math.round(shooter.getTopMotorRPM());
+        double bottomRPM = Math.round(shooter.getBottomMotorRPM());
+
+        // Logic to insure that we can test with only one motor
+        if( topRPM == 0 && bottomRPM != 0 )
+            SmartDashboard.putNumber("ShooterRPM", bottomRPM);
+        else
+            SmartDashboard.putNumber("ShooterRPM", topRPM);
     }
 
     // Prints the current position of a turret in degrees
@@ -53,23 +61,5 @@ public class Dashboard {
         SmartDashboard.putNumber(name + " RPM", pid.getRPM());
         SmartDashboard.putNumber(name + " Position", pid.getPosition());
         SmartDashboard.putString(name + " Domain", "[" + pid.getMin() + ", " + pid.getMax() + "]");
-    }
-
-    /* Prints the rpm of a shooter object to a SmartDashboard
-     * Shooters have two motors, but we only need to print the RPM
-     * of one motor, because they're locked together physically on the robot
-     * However, when testing with only one motor, we want to make sure it 
-     * isn't just printing the RPM of the motor that's disconnected (0 RPM)
-     */
-    public void testShooterRPM( Shooter shooter ) {
-        // Make temporary variables to shorten code
-        double topRPM = Math.round(shooter.getTopMotorRPM());
-        double bottomRPM = Math.round(shooter.getBottomMotorRPM());
-
-        // Logic to insure that we can test with only one motor
-        if( topRPM == 0 && bottomRPM != 0 )
-            SmartDashboard.putNumber("ShooterRPM", bottomRPM);
-        else
-            SmartDashboard.putNumber("ShooterRPM", topRPM);
     }
 }
