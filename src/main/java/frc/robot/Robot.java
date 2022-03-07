@@ -62,8 +62,7 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
   private GenericPID turretPID;
-  //private Timer autonTimer;
-  private double autoStartTime = Timer.getFPGATimestamp();
+  private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -100,83 +99,44 @@ public class Robot extends TimedRobot {
 
   }
 
-  @Override
-  public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
-    // block in order for anything in the Command-based framework to work.
-    //CommandScheduler.getInstance().run();
-  }
-
-  // This function is called once each time the robot enters Disabled mode.
-  @Override
-  public void disabledInit() {
-  }
-
-  @Override
-  public void disabledPeriodic() {
-  }
-
-  /** 
-   * This autonomous runs the autonomous command selected by your
-   * {@link RobotContainer} class.
-   */
+  // This function is called once at the start of auton
   @Override
   public void autonomousInit() {
-    // m_autonomousCommand = m_robotContainer.getAutonomousCommand();
-
-   // autonTimer.start();
-   // m_autoSelected = m_chooser.getSelected();
-    // // schedule the autonomous command (example)
-    // if (m_autonomousCommand != null) {
-      
-      //autonTimer.start();
-    // m_autonomousCommand.schedule();
-    // }
-    autoStartTime = Timer.getFPGATimestamp();
+    autonStartTime = Timer.getFPGATimestamp();
   }
 
-  /** This function is called periodically during autonomous. */
+  // This function is called every 20ms during auton
   @Override
   public void autonomousPeriodic() { 
+    double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
-    if((Timer.getFPGATimestamp() - autoStartTime > 2) && Timer.getFPGATimestamp() - autoStartTime < 10)
+    if((currentTime > 2) && currentTime < 10)
      shooter.set(-.55);
 
-    if (Timer.getFPGATimestamp() - autoStartTime > 5 && Timer.getFPGATimestamp() - autoStartTime < 10) {
+    if(currentTime > 5 && currentTime < 10) {
       elevator.set(1);
     }
-    if (Timer.getFPGATimestamp() - autoStartTime > 10 && Timer.getFPGATimestamp() - autoStartTime < 11.5) {
-      //((MotorController) m_myRobot).set(-.1);
-      //m_myRobot.arcadeDrive(-0.5, 0.5);
+    
+    if(currentTime > 10 && currentTime < 11.5) {
       drivetrain.getLeftMotorGroup().set(0.35);
       drivetrain.getRightMotorGroup().set(-0.35);
-      elevator.set(0);
-      shooter.set(0);
+      elevator.off();
+      shooter.off();
     } 
-    if (Timer.getFPGATimestamp() - autoStartTime > 11.5) {
+
+    if(currentTime > 11.5) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
-    if (Timer.getFPGATimestamp() - autoStartTime > 12)
+    if(currentTime > 12)
     intake.down();
 
   }
   
+  // This function is called once at the start of teleop
   @Override
   public void teleopInit() {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-    // if (m_autonomousCommand != null) {
-    // m_autonomousCommand.cancel();
-    // }
 
     turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
@@ -184,7 +144,7 @@ public class Robot extends TimedRobot {
     comp.enableDigital();
   }
 
-  /** This function is called periodically during operator control. */
+  // This function is called every 20ms during teleop
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
