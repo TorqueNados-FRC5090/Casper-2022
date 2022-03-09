@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.wrappers.GenericPID;
-import frc.robot.wrappers.LimitSwitch;
 import com.revrobotics.CANSparkMax.ControlType;
 
 // Camera imports
@@ -59,8 +58,6 @@ public class Robot extends TimedRobot {
   // Misc variables/objects
   private DifferentialDrive robotDrive;
   private Compressor comp;
-  private LimitSwitch leftClimberSwitch;
-  private LimitSwitch rightClimberSwitch;
   private GenericPID turretPID;
   private double autonStartTime;
   
@@ -91,9 +88,7 @@ public class Robot extends TimedRobot {
     intake = new Intake(10);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
-    climber = new Climber(11, 12);
-    leftClimberSwitch = new LimitSwitch(2);
-    rightClimberSwitch = new LimitSwitch(3);
+    climber = new Climber(11, 12, 2, 3);
 
     dashboard = new Dashboard();
 
@@ -197,27 +192,26 @@ public class Robot extends TimedRobot {
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
     }
       
-    // Climber cannot go further down after hitting limit switch
-    if(leftClimberSwitch.isPressed())
-      climber.setLeft(xbox.getLeftY() > 0 ? 0 : xbox.getLeftY());
-    else if(xbox.getLeftY() > .09 || xbox.getLeftY() < -.09 )
+    // Left stick Y-axis controls left climber arm
+    if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE )
       climber.setLeft(xbox.getLeftY());
-    else
-      climber.setLeft(0);
+    else  
+      climber.leftOff();
 
-    if(rightClimberSwitch.isPressed())
-      climber.setRight(xbox.getRightY() > 0 ? 0 : xbox.getRightY());
-    else if(xbox.getRightY() > .09 || xbox.getRightY() < -.09 )
+    // Right stick Y-axis controls left climber arm
+    if(Math.abs(xbox.getRightY()) > CLIMBER_DEADZONE )
       climber.setRight(xbox.getRightY());
-    else
-      climber.setRight(0);
+    else  
+      climber.rightOff();
 
-    // X button controls the intake state
+    // X button lowers intake
     if(xbox.getXButton())
       intake.down();
+    // Y button raises intake
     else if(xbox.getYButton())
       intake.up();
 
+    // Start and back control the hood
     if(xbox.getStartButton())
       hood.setPower(-.1);
     else if(xbox.getBackButton())
