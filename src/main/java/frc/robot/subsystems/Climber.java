@@ -50,6 +50,16 @@ public class Climber {
             rightLimitSwitch.isPressed() ? pwr : Math.abs(pwr));
     }
 
+    // Turns off left arm
+    public void leftOff() {
+        leftMotor.set(0);
+    }
+
+    // Turns off right arm
+    public void rightOff() {
+        rightMotor.set(0);
+    }
+
     // Stop the climber
     public void off() {
         leftMotor.set(0);
