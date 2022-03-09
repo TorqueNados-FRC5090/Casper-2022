@@ -150,8 +150,6 @@ public class Robot extends TimedRobot {
     // Puts the robot in arcade drive
     robotDrive.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
-    elevator.updateElevator();
-
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
@@ -193,6 +191,8 @@ public class Robot extends TimedRobot {
     // Right trigger pushes a ball into the shooter
     if(xbox.getRightTriggerAxis() > 0)
       elevator.shoot();
+    else
+      elevator.auto();
 
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
@@ -251,6 +251,8 @@ public class Robot extends TimedRobot {
     // Update anything that needs to update
     shooter.updateCurrentPower();
     dashboard.printShooterRPM(shooter);
+    elevator.update();
+    dashboard.printElevatorStorage(elevator);
     dashboard.printTurretDegrees(turret);
     dashboard.PIDtoDashboard(turretPID, "Turret");
     limelight.updateLimelightTracking();
