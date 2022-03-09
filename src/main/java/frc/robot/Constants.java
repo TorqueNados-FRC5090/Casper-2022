@@ -16,6 +16,9 @@ public final class Constants {
     // How many times the turret's motor needs to rotate to turn the turret 1 degree
     public static final double TURRET_RATIO = 2.3737373737;
 
+    // Climber deadzone used to combat stick-drift
+    public static final double CLIMBER_DEADZONE = .1;
+
     // Limelight calculation numbers
     public static final int LIME_HEIGHT = 39; // Height of limelight off the ground in inches
     public static final int TARGET_HEIGHT = 104; // Height of target in inches
