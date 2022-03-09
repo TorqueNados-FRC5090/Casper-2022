@@ -10,18 +10,17 @@ public class Elevator {
     // Declare variables
     private LaserDetector topSensor;
     private LaserDetector bottomSensor;
-
     private CANSparkMax motor; 
     private boolean bottomSensorHasBall;
     private boolean topSensorHasBall;
 
     // Constructor 
     public Elevator(int motorID, int bottomSensorID, int topSensorID) {
-        // Initialize variables
+        // Initialize motors
         motor = new CANSparkMax(motorID, MotorType.kBrushless);
         motor.setInverted(true);
 
-        //CHANGE TO THE RIGHT PORT 
+        // Initialize Laser
         topSensor = new LaserDetector(bottomSensorID);
         bottomSensor = new LaserDetector(topSensorID);
     }
@@ -32,9 +31,13 @@ public class Elevator {
 
     // Sets the motor to full speed
     public void fullForward() { motor.set(1); }
+    // shoot() is an alias for fullForward()
+    public void shoot() { fullForward(); }
 
     // Sets the motor to full speed in reverse
     public void fullBackward() { motor.set(-1); }
+    // Ejects a ball at half speed
+    public void ejectBall() { motor.set(-0.5); }
 
     // Turns on the motor 
     public void set(double pwr) { motor.set(pwr); }
@@ -42,23 +45,20 @@ public class Elevator {
     // Turns off the motor
     public void off() { motor.set(0); }
 
-    // Ejects a ball at half speed
-    public void ejectBall() { set(-0.5); }
-
-    public void updateElevator() {
+    // Updates the state of the elevator's storage
+    public void update() {
         bottomSensorHasBall = bottomSensor.isBlocked();
         topSensorHasBall = topSensor.isBlocked();
-        
-        if(topSensorHasBall){
-            off();
-        }else if(bottomSensorHasBall){
-            set(0.5);
-        }else{
-            off();
-        }
     }
 
-    public void shoot() { 
-        fullForward();
+    // Automatically runs the elevator based on 
+    // the state of its sensors
+    public void auto() {
+        if(topSensorHasBall)
+            off();
+        else if(bottomSensorHasBall)
+            set(0.5);
+        else
+            off();
     }
 }
