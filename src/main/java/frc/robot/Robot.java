@@ -87,8 +87,8 @@ public class Robot extends TimedRobot {
     shooter = new Shooter(5, 9);    
     shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00155, .0000005, 0);
     shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00155, .0000005, 0);
-    shooterPID.getController().setOutputRange(-1,1);
-    shooterPID2.getController().setOutputRange(-1,1);
+    shooterPID.setOutputRange(-1,1);
+    shooterPID2.setOutputRange(-1,1);
 
     hood = new Hood(15);
 
