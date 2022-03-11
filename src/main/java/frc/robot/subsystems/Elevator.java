@@ -57,7 +57,7 @@ public class Elevator {
         if(topSensorHasBall)
             off();
         else if(bottomSensorHasBall)
-            set(0.35);
+            set(0.4);
         else
             off();
     }
