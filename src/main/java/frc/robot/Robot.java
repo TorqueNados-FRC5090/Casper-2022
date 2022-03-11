@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
-    turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
