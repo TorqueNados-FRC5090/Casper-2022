@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.misc_subclasses.Dashboard;
 import frc.robot.misc_subclasses.Limelight;
-import static frc.robot.Constants.*; 
+import static frc.robot.Constants.*;
 
 
 
@@ -62,6 +62,8 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
   private GenericPID turretPID;
+  private GenericPID shooterPID;
+  private GenericPID shooterPID2;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -83,6 +85,10 @@ public class Robot extends TimedRobot {
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
 
     shooter = new Shooter(5, 9);    
+    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00155, .0000005, 0);
+    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00155, .0000005, 0);
+    shooterPID.getController().setOutputRange(-1,1);
+    shooterPID2.getController().setOutputRange(-1,1);
 
     hood = new Hood(15);
 
@@ -195,6 +201,9 @@ public class Robot extends TimedRobot {
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+
+      shooterPID.activate(500);
+      shooterPID2.activate(500);
     }
       
     // Climber cannot go further down after hitting limit switch
