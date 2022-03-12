@@ -152,9 +152,9 @@ public class Robot extends TimedRobot {
 
     // Joystick trigger activates motor
     if(joystick.getTrigger())
-      intake.set(1);
+      intake.set(.75);
     else if(joystick.getRawButton(2))
-      intake.set(-1);
+      intake.set(-.75);
     else
       intake.motorOff();
 
@@ -218,6 +218,12 @@ public class Robot extends TimedRobot {
     if(xbox.getXButton())
       intake.down();
     else if(xbox.getYButton())
+      intake.up();
+
+    // joystick controls intake state
+    if(joystick.getRawButton(3))
+      intake.down();
+    else if (joystick.getRawButton(4))
       intake.up();
 
     if(xbox.getStartButton())
