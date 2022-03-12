@@ -1,28 +1,28 @@
 package frc.robot.subsystems;
 
 // Imports
-import edu.wpi.first.wpilibj.AnalogInput;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-import edu.wpi.first.wpilibj.RobotController;
+import frc.robot.wrappers.LaserDetector;
 
 public class Elevator {
 
     // Declare variables
-    private AnalogInput bottomSensor;
-    private AnalogInput topSensor; 
+    private LaserDetector topSensor;
+    private LaserDetector bottomSensor;
     private CANSparkMax motor; 
     private boolean bottomSensorHasBall;
     private boolean topSensorHasBall;
 
     // Constructor 
     public Elevator(int motorID, int bottomSensorID, int topSensorID) {
-        // Initialize variables
+        // Initialize motors
         motor = new CANSparkMax(motorID, MotorType.kBrushless);
         motor.setInverted(true);
 
-        bottomSensor = new AnalogInput(bottomSensorID);
-        topSensor = new AnalogInput(topSensorID);
+        // Initialize Laser
+        topSensor = new LaserDetector(bottomSensorID);
+        bottomSensor = new LaserDetector(topSensorID);
     }
 
     // Accessor methods
@@ -31,9 +31,13 @@ public class Elevator {
 
     // Sets the motor to full speed
     public void fullForward() { motor.set(1); }
+    // shoot() is an alias for fullForward()
+    public void shoot() { fullForward(); }
 
     // Sets the motor to full speed in reverse
     public void fullBackward() { motor.set(-1); }
+    // Ejects a ball at half speed
+    public void ejectBall() { motor.set(-0.5); }
 
     // Turns on the motor 
     public void set(double pwr) { motor.set(pwr); }
@@ -41,26 +45,20 @@ public class Elevator {
     // Turns off the motor
     public void off() { motor.set(0); }
 
-    // Returns the distance between sensor and ball in centimeters
-    public double findDistance(AnalogInput sensor) {
-        double rawValue = sensor.getValue();
-    
-        // voltageScaleFactor allows us to compensate for differences in supply voltage
-        double voltageScaleFactor = 5/RobotController.getVoltage5V();
-        return rawValue * voltageScaleFactor * 0.125;
+    // Updates the state of the elevator's storage
+    public void update() {
+        bottomSensorHasBall = bottomSensor.isBlocked();
+        topSensorHasBall = topSensor.isBlocked();
     }
-    
-    // Updates the state of the elevator's sensors
-    public void updateElevator() {
-        // Checks each of the sensors for a ball
-        if(findDistance(bottomSensor) < 35)
-            bottomSensorHasBall = true;
-        else
-            bottomSensorHasBall = false; 
 
-        if(findDistance(topSensor) < 35)
-            topSensorHasBall = true;
+    // Automatically runs the elevator based on 
+    // the state of its sensors
+    public void auto() {
+        if(topSensorHasBall)
+            off();
+        else if(bottomSensorHasBall)
+            set(0.4);
         else
-            topSensorHasBall = false; 
+            off();
     }
 }

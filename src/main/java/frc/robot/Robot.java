@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.misc_subclasses.Dashboard;
 import frc.robot.misc_subclasses.Limelight;
-import static frc.robot.Constants.*; 
+import static frc.robot.Constants.*;
 
 
 
@@ -59,6 +59,8 @@ public class Robot extends TimedRobot {
   private DifferentialDrive robotDrive;
   private Compressor comp;
   private GenericPID turretPID;
+  private GenericPID shooterPID;
+  private GenericPID shooterPID2;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -79,7 +81,11 @@ public class Robot extends TimedRobot {
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
 
-    shooter = new Shooter(5, 9);    
+    shooter = new Shooter(9, 5);    
+    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID.setOutputRange(-1,1);
+    shooterPID2.setOutputRange(-1,1);
 
     hood = new Hood(15);
 
@@ -133,7 +139,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
-    turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
@@ -147,9 +153,9 @@ public class Robot extends TimedRobot {
 
     // Joystick trigger activates motor
     if(joystick.getTrigger())
-      intake.set(1);
+      intake.set(.75);
     else if(joystick.getRawButton(2))
-      intake.set(-1);
+      intake.set(-.75);
     else
       intake.motorOff();
 
@@ -185,11 +191,16 @@ public class Robot extends TimedRobot {
 
     // Right trigger pushes a ball into the shooter
     if(xbox.getRightTriggerAxis() > 0)
-      elevator.fullForward();
+      elevator.shoot();
+    else
+      elevator.auto();
 
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+
+      shooterPID.activate(5000);
+      shooterPID2.activate(5000);
     }
       
     // Left stick Y-axis controls left climber arm
@@ -209,6 +220,12 @@ public class Robot extends TimedRobot {
       intake.down();
     // Y button raises intake
     else if(xbox.getYButton())
+      intake.up();
+
+    // joystick controls intake state
+    if(joystick.getRawButton(3))
+      intake.down();
+    else if (joystick.getRawButton(4))
       intake.up();
 
     // Start and back control the hood
@@ -243,9 +260,12 @@ public class Robot extends TimedRobot {
     // Update anything that needs to update
     shooter.updateCurrentPower();
     dashboard.printShooterRPM(shooter);
+    elevator.update();
+    dashboard.printElevatorStorage(elevator);
     dashboard.printTurretDegrees(turret);
     dashboard.PIDtoDashboard(turretPID, "Turret");
     limelight.updateLimelightTracking();
     dashboard.printLimelightData(limelight);
+    dashboard.PIDtoDashboard(shooterPID, "Shooter");
   }
 }
