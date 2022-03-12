@@ -29,7 +29,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.misc_subclasses.Dashboard;
 import frc.robot.misc_subclasses.Limelight;
-import static frc.robot.Constants.*; 
+import static frc.robot.Constants.*;
 
 
 
@@ -62,6 +62,8 @@ public class Robot extends TimedRobot {
   private LimitSwitch leftClimberSwitch;
   private LimitSwitch rightClimberSwitch;
   private GenericPID turretPID;
+  private GenericPID shooterPID;
+  private GenericPID shooterPID2;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -82,7 +84,11 @@ public class Robot extends TimedRobot {
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
 
-    shooter = new Shooter(5, 9);    
+    shooter = new Shooter(9, 5);    
+    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID.setOutputRange(-1,1);
+    shooterPID2.setOutputRange(-1,1);
 
     hood = new Hood(15);
 
@@ -138,7 +144,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
 
-    turretPID.setDomain(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
     turretPID.setSetpoint(0);
 
     comp.enableDigital();
@@ -197,6 +203,9 @@ public class Robot extends TimedRobot {
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+
+      shooterPID.activate(5000);
+      shooterPID2.activate(5000);
     }
       
     // Climber cannot go further down after hitting limit switch
@@ -263,5 +272,6 @@ public class Robot extends TimedRobot {
     dashboard.PIDtoDashboard(turretPID, "Turret");
     limelight.updateLimelightTracking();
     dashboard.printLimelightData(limelight);
+    dashboard.PIDtoDashboard(shooterPID, "Shooter");
   }
 }
