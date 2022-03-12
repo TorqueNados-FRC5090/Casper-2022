@@ -24,6 +24,12 @@ public class Dashboard {
             SmartDashboard.putNumber("ShooterRPM", topRPM);
     }
 
+    // Prints the state of the elevator's storage
+    public void printElevatorStorage(Elevator elevator) {
+        SmartDashboard.putBoolean("Top Sensor", elevator.topSensorHasBall());
+        SmartDashboard.putBoolean("Bottom Sensor", elevator.bottomSensorHasBall());
+    }
+
     // Prints the current position of a turret in degrees
     public void printTurretDegrees(Turret turret) {
         SmartDashboard.putNumber("TurretPos", turret.getPosition() / TURRET_RATIO);
