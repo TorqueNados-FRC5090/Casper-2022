@@ -84,9 +84,9 @@ public class Robot extends TimedRobot {
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
 
-    shooter = new Shooter(5, 9);    
-    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00155, .0000005, 0);
-    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00155, .0000005, 0);
+    shooter = new Shooter(9, 5);    
+    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00022, .0000005, 0);
     shooterPID.setOutputRange(-1,1);
     shooterPID2.setOutputRange(-1,1);
 
@@ -202,8 +202,8 @@ public class Robot extends TimedRobot {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate(500);
-      shooterPID2.activate(500);
+      shooterPID.activate(5000);
+      shooterPID2.activate(5000);
     }
       
     // Climber cannot go further down after hitting limit switch
@@ -262,5 +262,6 @@ public class Robot extends TimedRobot {
     dashboard.PIDtoDashboard(turretPID, "Turret");
     limelight.updateLimelightTracking();
     dashboard.printLimelightData(limelight);
+    dashboard.PIDtoDashboard(shooterPID, "Shooter");
   }
 }
