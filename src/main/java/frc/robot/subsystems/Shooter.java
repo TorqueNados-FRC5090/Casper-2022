@@ -25,6 +25,7 @@ public class Shooter {
     followerMotor = new CANSparkMax(FollowerID, MotorType.kBrushless);
     followerMotor.restoreFactoryDefaults();
     followerMotor.setInverted(true);
+    followerMotor.follow(leaderMotor);
 
     // Shooter starts in the 'off' state
     shooterIsOn = false;
@@ -57,9 +58,7 @@ public class Shooter {
     if(locked && pwr <= leaderMotor.get())
       return; 
 
-    // Set motors
-    leaderMotor.set(pwr);
-    followerMotor.set(pwr);
+      leaderMotor.set(pwr);
 
     // Update shooter state
     if( pwr == 0 ) { shooterIsOn = false; }
@@ -79,14 +78,12 @@ public class Shooter {
   // Sets shooter to full power
   public void fullPower() {
     leaderMotor.set(1);
-    followerMotor.set(1);
     shooterIsOn = true;
   }
 
   // Turns shooter off
   public void off(){
     leaderMotor.set(0);
-    followerMotor.set(0);
     shooterIsOn = false;
   }
 
