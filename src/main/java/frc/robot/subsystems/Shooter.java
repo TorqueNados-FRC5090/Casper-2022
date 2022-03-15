@@ -24,8 +24,7 @@ public class Shooter {
     // always spin opposite to the Leader motor
     followerMotor = new CANSparkMax(FollowerID, MotorType.kBrushless);
     followerMotor.restoreFactoryDefaults();
-    followerMotor.setInverted(true);
-    followerMotor.follow(leaderMotor);
+    followerMotor.follow(leaderMotor, true);
 
     // Shooter starts in the 'off' state
     shooterIsOn = false;
