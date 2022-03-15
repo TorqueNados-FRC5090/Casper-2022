@@ -11,17 +11,9 @@ public class Dashboard {
     // Constructor method
     public Dashboard() {}
 
-    // Prints the rpm of the shooter, even when only one motor is being run
+    // Prints the rpm of the shooter
     public void printShooterRPM( Shooter shooter ) {
-        // Make temporary variables to shorten code
-        double topRPM = Math.round(shooter.getTopMotorRPM());
-        double bottomRPM = Math.round(shooter.getBottomMotorRPM());
-
-        // Logic to insure that we can test with only one motor
-        if( topRPM == 0 && bottomRPM != 0 )
-            SmartDashboard.putNumber("ShooterRPM", bottomRPM);
-        else
-            SmartDashboard.putNumber("ShooterRPM", topRPM);
+        SmartDashboard.putNumber("ShooterRPM", Math.round(shooter.getLeaderMotorRPM()));
     }
 
     // Prints the state of the elevator's storage

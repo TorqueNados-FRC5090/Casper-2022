@@ -82,8 +82,8 @@ public class Robot extends TimedRobot {
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
 
     shooter = new Shooter(9, 5);    
-    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00022, .0000005, 0);
-    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID = new GenericPID(shooter.getLeaderMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID2 = new GenericPID(shooter.getFollowerMotor(), ControlType.kVelocity, .00022, .0000005, 0);
     shooterPID.setOutputRange(-1,1);
     shooterPID2.setOutputRange(-1,1);
 

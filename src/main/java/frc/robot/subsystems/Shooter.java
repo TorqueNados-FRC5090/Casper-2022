@@ -7,24 +7,24 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // This object is used to control the shooter
 public class Shooter {
     // Declare all shooter variables 
-    private CANSparkMax topMotor; // CW
-    private CANSparkMax bottomMotor; // CCW
+    private CANSparkMax leaderMotor; // CW
+    private CANSparkMax followerMotor; // CCW
     private boolean shooterIsOn;
     private boolean locked;
     private double currentPower;
   
   // Constructor method initiallizes variables used
-  public Shooter( int topID, int bottomID) {
-    // Initiallize top motor
-    topMotor = new CANSparkMax(topID, MotorType.kBrushless);
-    topMotor.restoreFactoryDefaults();
+  public Shooter( int LeaderID, int FollowerID) {
+    // Initiallize Leader motor
+    leaderMotor = new CANSparkMax(LeaderID, MotorType.kBrushless);
+    leaderMotor.restoreFactoryDefaults();
 
-    // Initialize bottom motor
-    // Bottom motor is inverted so that it will
-    // always spin opposite to the top motor
-    bottomMotor = new CANSparkMax(bottomID, MotorType.kBrushless);
-    bottomMotor.restoreFactoryDefaults();
-    bottomMotor.setInverted(true);
+    // Initialize Follower motor
+    // Follower motor is inverted so that it will
+    // always spin opposite to the Leader motor
+    followerMotor = new CANSparkMax(FollowerID, MotorType.kBrushless);
+    followerMotor.restoreFactoryDefaults();
+    followerMotor.setInverted(true);
 
     // Shooter starts in the 'off' state
     shooterIsOn = false;
@@ -33,16 +33,16 @@ public class Shooter {
   }
 
   // Accessor Methods (getters)
-  public CANSparkMax getTopMotor() { return topMotor; }
-  public CANSparkMax getBottomMotor() { return bottomMotor; }
-  public double getTopMotorRPM() { return topMotor.getEncoder().getVelocity(); }
-  public double getBottomMotorRPM() { return bottomMotor.getEncoder().getVelocity(); }
+  public CANSparkMax getLeaderMotor() { return leaderMotor; }
+  public CANSparkMax getFollowerMotor() { return followerMotor; }
+  public double getLeaderMotorRPM() { return leaderMotor.getEncoder().getVelocity(); }
+  public double getFollowerMotorRPM() { return followerMotor.getEncoder().getVelocity(); }
   public boolean isOn() { return shooterIsOn; }
   public boolean isLocked() { return locked; }
   public double getCurrentPower() { return currentPower; }
 
   // Makes sure that current power is accurate
-  public void updateCurrentPower() { currentPower = topMotor.get(); }
+  public void updateCurrentPower() { currentPower = leaderMotor.get(); }
 
   // Tracks the power of the motor and
   // locks the power at the highest value detected
@@ -54,12 +54,12 @@ public class Shooter {
     // If the lock is on and the desired power
     // is not greater than the current power,
     // the function immediately ends
-    if(locked && pwr <= topMotor.get())
+    if(locked && pwr <= leaderMotor.get())
       return; 
 
     // Set motors
-    topMotor.set(pwr);
-    bottomMotor.set(pwr);
+    leaderMotor.set(pwr);
+    followerMotor.set(pwr);
 
     // Update shooter state
     if( pwr == 0 ) { shooterIsOn = false; }
@@ -78,15 +78,15 @@ public class Shooter {
 
   // Sets shooter to full power
   public void fullPower() {
-    topMotor.set(1);
-    bottomMotor.set(1);
+    leaderMotor.set(1);
+    followerMotor.set(1);
     shooterIsOn = true;
   }
 
   // Turns shooter off
   public void off(){
-    topMotor.set(0);
-    bottomMotor.set(0);
+    leaderMotor.set(0);
+    followerMotor.set(0);
     shooterIsOn = false;
   }
 
