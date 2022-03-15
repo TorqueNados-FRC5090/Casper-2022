@@ -39,7 +39,7 @@ public class Shooter {
   public double getBottomMotorRPM() { return bottomMotor.getEncoder().getVelocity(); }
   public boolean isOn() { return shooterIsOn; }
   public boolean isLocked() { return locked; }
-  public double currentPower() { return currentPower; }
+  public double getCurrentPower() { return currentPower; }
 
   // Makes sure that current power is accurate
   public void updateCurrentPower() { currentPower = topMotor.get(); }
