@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate();
+      shooterPID.activate((.056918 * Math.pow(limelight.getDistance(), 2)) + (1.96339 * limelight.getDistance()) + (3022.7));
     }
       
     // Left stick Y-axis controls left climber arm
