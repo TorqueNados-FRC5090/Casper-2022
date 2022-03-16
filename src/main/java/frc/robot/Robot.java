@@ -60,7 +60,6 @@ public class Robot extends TimedRobot {
   private Compressor comp;
   private GenericPID turretPID;
   private GenericPID shooterPID;
-  private GenericPID shooterPID2;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -82,10 +81,8 @@ public class Robot extends TimedRobot {
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
 
     shooter = new Shooter(9, 5);    
-    shooterPID = new GenericPID(shooter.getTopMotor(), ControlType.kVelocity, .00022, .0000005, 0);
-    shooterPID2 = new GenericPID(shooter.getBottomMotor(), ControlType.kVelocity, .00022, .0000005, 0);
+    shooterPID = new GenericPID(shooter.getLeaderMotor(), ControlType.kVelocity, .00022, .0000005, 0);
     shooterPID.setOutputRange(-1,1);
-    shooterPID2.setOutputRange(-1,1);
 
     hood = new Hood(15);
 
@@ -199,8 +196,7 @@ public class Robot extends TimedRobot {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate(5000);
-      shooterPID2.activate(5000);
+      shooterPID.activate();
     }
       
     // Left stick Y-axis controls left climber arm
@@ -259,13 +255,12 @@ public class Robot extends TimedRobot {
 
     // Update anything that needs to update
     shooter.updateCurrentPower();
-    dashboard.printShooterRPM(shooter);
+    dashboard.PIDtoDashboard(shooterPID, "Shooter");
     elevator.update();
     dashboard.printElevatorStorage(elevator);
     dashboard.printTurretDegrees(turret);
     dashboard.PIDtoDashboard(turretPID, "Turret");
     limelight.updateLimelightTracking();
     dashboard.printLimelightData(limelight);
-    dashboard.PIDtoDashboard(shooterPID, "Shooter");
   }
 }

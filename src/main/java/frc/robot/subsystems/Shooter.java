@@ -7,46 +7,46 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 // This object is used to control the shooter
 public class Shooter {
     // Declare all shooter variables 
-    private CANSparkMax topMotor; // CW
-    private CANSparkMax bottomMotor; // CCW
+    private CANSparkMax leaderMotor; // CW
+    private CANSparkMax followerMotor; // CCW
     private boolean shooterIsOn;
     private boolean locked;
     private double currentPower;
   
   // Constructor method initiallizes variables used
-  public Shooter( int topID, int bottomID) {
-    // Initiallize top motor
-    this.topMotor = new CANSparkMax(topID, MotorType.kBrushless);
-    this.topMotor.restoreFactoryDefaults();
+  public Shooter( int LeaderID, int FollowerID) {
+    // Initiallize Leader motor
+    leaderMotor = new CANSparkMax(LeaderID, MotorType.kBrushless);
+    leaderMotor.restoreFactoryDefaults();
 
-    // Initialize bottom motor
-    // Bottom motor is inverted so that it will
-    // always spin opposite to the top motor
-    this.bottomMotor = new CANSparkMax(bottomID, MotorType.kBrushless);
-    this.bottomMotor.restoreFactoryDefaults();
-    this.bottomMotor.setInverted(true);
+    // Initialize Follower motor
+    // Follower motor is inverted so that it will
+    // always spin opposite to the Leader motor
+    followerMotor = new CANSparkMax(FollowerID, MotorType.kBrushless);
+    followerMotor.restoreFactoryDefaults();
+    followerMotor.follow(leaderMotor, true);
 
     // Shooter starts in the 'off' state
-    this.shooterIsOn = false;
+    shooterIsOn = false;
     // Shooter is unlocked by default
-    this.locked = false;
+    locked = false;
   }
 
   // Accessor Methods (getters)
-  public CANSparkMax getTopMotor() { return topMotor; }
-  public CANSparkMax getBottomMotor() { return bottomMotor; }
-  public double getTopMotorRPM() { return topMotor.getEncoder().getVelocity(); }
-  public double getBottomMotorRPM() { return bottomMotor.getEncoder().getVelocity(); }
+  public CANSparkMax getLeaderMotor() { return leaderMotor; }
+  public CANSparkMax getFollowerMotor() { return followerMotor; }
+  public double getLeaderMotorRPM() { return leaderMotor.getEncoder().getVelocity(); }
+  public double getFollowerMotorRPM() { return followerMotor.getEncoder().getVelocity(); }
   public boolean isOn() { return shooterIsOn; }
   public boolean isLocked() { return locked; }
-  public double currentPower() { return currentPower; }
+  public double getCurrentPower() { return currentPower; }
 
   // Makes sure that current power is accurate
-  public void updateCurrentPower() { currentPower = topMotor.get(); }
+  public void updateCurrentPower() { currentPower = leaderMotor.get(); }
 
   // Tracks the power of the motor and
   // locks the power at the highest value detected
-  public void setLock(boolean lock) { this.locked = lock; }
+  public void setLock(boolean locked) { this.locked = locked; }
 
   // Sets shooter to specified power
   // Power is locked to [-1, 1]
@@ -54,12 +54,10 @@ public class Shooter {
     // If the lock is on and the desired power
     // is not greater than the current power,
     // the function immediately ends
-    if(this.locked && pwr <= topMotor.get())
+    if(locked && pwr <= leaderMotor.get())
       return; 
 
-    // Set motors
-    topMotor.set(pwr);
-    bottomMotor.set(pwr);
+      leaderMotor.set(pwr);
 
     // Update shooter state
     if( pwr == 0 ) { shooterIsOn = false; }
@@ -78,30 +76,28 @@ public class Shooter {
 
   // Sets shooter to full power
   public void fullPower() {
-    topMotor.set(1);
-    bottomMotor.set(1);
+    leaderMotor.set(1);
     shooterIsOn = true;
   }
 
   // Turns shooter off
   public void off(){
-    topMotor.set(0);
-    bottomMotor.set(0);
+    leaderMotor.set(0);
     shooterIsOn = false;
   }
 
   // If shooter is off, this will turn it on
   // If shooter is on, this will turn it off
   public void toggle() {
-    if( shooterIsOn ) { this.off(); }
-    else { this.fullPower(); }
+    if( shooterIsOn ) { off(); }
+    else { fullPower(); }
   }
 
   // If shooter is off, this will set it to
   // the specified power
   // If shooter is on, this will turn it off
   public void toggle( double pwr ) {
-    if( shooterIsOn ) { this.off(); }
-    else { this.set(pwr); }
+    if( shooterIsOn ) { off(); }
+    else { set(pwr); }
   }
 }
