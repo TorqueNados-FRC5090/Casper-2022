@@ -234,12 +234,12 @@ public class Robot extends TimedRobot {
     
     // preset motor value to shoot ball
     if(xbox.getLeftStickButton()) {
-      shooter.set(-.65);
+      shooterPID.activate(3100);
     }
 
     // preset motor value to shoot ball at low speed (reject ball)
     if(xbox.getRightStickButton()) {
-      shooter.set(-.3);
+      shooterPID.activate(1700);
     }
 
 
