@@ -196,7 +196,7 @@ public class Robot extends TimedRobot {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate();
+      shooterPID.activate((.056918 * Math.pow(limelight.getDistance(), 2)) + (1.96339 * limelight.getDistance()) + (3022.7));
     }
       
     // Left stick Y-axis controls left climber arm
@@ -234,12 +234,12 @@ public class Robot extends TimedRobot {
     
     // preset motor value to shoot ball
     if(xbox.getLeftStickButton()) {
-      shooter.set(-.65);
+      shooterPID.activate(3100);
     }
 
     // preset motor value to shoot ball at low speed (reject ball)
     if(xbox.getRightStickButton()) {
-      shooter.set(-.3);
+      shooterPID.activate(1700);
     }
 
 
