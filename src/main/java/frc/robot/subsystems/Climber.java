@@ -32,22 +32,22 @@ public class Climber {
     // Set left arm's power
     public void setLeft(double pwr) { 
         leftMotor.set(
-            leftLimitSwitch.isPressed() ? pwr : Math.abs(pwr));
+            leftLimitSwitch.isPressed() ? Math.abs(pwr) : pwr );
     }
 
     // Set right arm's power
     public void setRight(double pwr) { 
         rightMotor.set(
-            rightLimitSwitch.isPressed() ? pwr : Math.abs(pwr));
+            rightLimitSwitch.isPressed() ? Math.abs(pwr) : pwr );
     }
 
     // Set the power of the motors together
     public void set(double pwr) {
         leftMotor.set(
-            leftLimitSwitch.isPressed() ? pwr : Math.abs(pwr));
+            leftLimitSwitch.isPressed() ? Math.abs(pwr) : pwr );
 
         rightMotor.set(
-            rightLimitSwitch.isPressed() ? pwr : Math.abs(pwr));
+            rightLimitSwitch.isPressed() ? Math.abs(pwr) : pwr );
     }
 
     // Turns off left arm
