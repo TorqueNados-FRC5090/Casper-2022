@@ -186,6 +186,9 @@ public class Robot extends TimedRobot {
         elevator.off();
     }
 
+    if(xbox.getAButton())
+      elevator.lift();
+
     // Right trigger pushes a ball into the shooter
     if(xbox.getRightTriggerAxis() > 0)
       elevator.shoot();
