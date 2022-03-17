@@ -62,6 +62,8 @@ public class Elevator {
             off();
     }
 
+    // Raises the contents of the elevator until
+    // the top sensor is triggered
     public void lift() { 
         if(!topSensorHasBall)
             set(0.4);
