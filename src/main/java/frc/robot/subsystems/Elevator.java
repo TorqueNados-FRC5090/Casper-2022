@@ -61,4 +61,9 @@ public class Elevator {
         else
             off();
     }
+
+    public void lift() { 
+        if(!topSensorHasBall)
+            set(0.4);
+    }
 }
