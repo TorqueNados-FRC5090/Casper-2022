@@ -186,12 +186,11 @@ public class Robot extends TimedRobot {
         // Right trigger pushes a ball into the shooter
         if(xbox.getRightTriggerAxis() > 0)
           elevator.shoot();
+        else if(xbox.getAButton())
+          elevator.lift();
         else
           elevator.auto();
     }
-
-    if(xbox.getAButton())
-      elevator.lift();
 
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
