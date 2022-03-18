@@ -95,7 +95,7 @@ public class Robot extends TimedRobot {
 
     dashboard = new Dashboard();
 
-    
+
   }
 
   // This function is called once at the start of auton
