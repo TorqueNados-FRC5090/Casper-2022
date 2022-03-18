@@ -95,6 +95,7 @@ public class Robot extends TimedRobot {
 
     dashboard = new Dashboard();
 
+
   }
 
   // This function is called once at the start of auton
@@ -109,7 +110,7 @@ public class Robot extends TimedRobot {
     double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
     if((currentTime > 2) && currentTime < 10)
-     shooter.set(-.55);
+     shooterPID.activate(3050);
 
     if(currentTime > 5 && currentTime < 10) {
       elevator.set(1);
@@ -119,7 +120,7 @@ public class Robot extends TimedRobot {
       drivetrain.getLeftMotorGroup().set(0.35);
       drivetrain.getRightMotorGroup().set(-0.35);
       elevator.off();
-      shooter.off();
+      shooterPID.pause();
     } 
 
     if(currentTime > 11.5) {
@@ -171,10 +172,10 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        elevator.set(.3);
+        elevator.set(.4);
         break;
       case 180: // DOWN
-        elevator.set(-.3);
+        elevator.set(-.4);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -182,15 +183,15 @@ public class Robot extends TimedRobot {
       case 270: // LEFT
         shooter.decreasePowerBy(.004);
         break;
-      case -1: // NOT PRESSED
-        elevator.off();
+      default: // NOT PRESSED
+        // Right trigger pushes a ball into the shooter
+        if(xbox.getRightTriggerAxis() > 0)
+          elevator.shoot();
+        else if(xbox.getAButton())
+          elevator.lift();
+        else
+          elevator.auto();
     }
-
-    // Right trigger pushes a ball into the shooter
-    if(xbox.getRightTriggerAxis() > 0)
-      elevator.shoot();
-    else
-      elevator.auto();
 
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
