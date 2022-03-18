@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
     double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
     if((currentTime > 2) && currentTime < 10)
-     shooter.set(-.55);
+     shooterPID.activate(3050);
 
     if(currentTime > 5 && currentTime < 10) {
       elevator.set(1);
@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
       drivetrain.getLeftMotorGroup().set(0.35);
       drivetrain.getRightMotorGroup().set(-0.35);
       elevator.off();
-      shooter.off();
+      shooterPID.pause();
     } 
 
     if(currentTime > 11.5) {
