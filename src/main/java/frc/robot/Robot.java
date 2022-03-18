@@ -171,10 +171,10 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        elevator.set(.3);
+        elevator.set(.4);
         break;
       case 180: // DOWN
-        elevator.set(-.3);
+        elevator.set(-.4);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -182,18 +182,16 @@ public class Robot extends TimedRobot {
       case 270: // LEFT
         shooter.decreasePowerBy(.004);
         break;
-      case -1: // NOT PRESSED
-        elevator.off();
+      default: // NOT PRESSED
+        // Right trigger pushes a ball into the shooter
+        if(xbox.getRightTriggerAxis() > 0)
+          elevator.shoot();
+        else
+          elevator.auto();
     }
 
     if(xbox.getAButton())
       elevator.lift();
-
-    // Right trigger pushes a ball into the shooter
-    if(xbox.getRightTriggerAxis() > 0)
-      elevator.shoot();
-    else
-      elevator.auto();
 
     if(xbox.getLeftTriggerAxis() > 0) {
       turretPID.activate(
