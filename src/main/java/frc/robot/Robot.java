@@ -253,15 +253,21 @@ public class Robot extends TimedRobot {
       hood.off();
       turretPID.pause();
     }
+  }
 
-    // Update anything that needs to update
+  // This function is called every 20ms while the robot is enabled
+  @Override
+  public void robotPeriodic() {
+    // Update subclass internal values
     shooter.updateCurrentPower();
-    dashboard.PIDtoDashboard(shooterPID, "Shooter");
     elevator.update();
+    limelight.updateLimelightTracking();
+
+    // Update dashboard
+    dashboard.PIDtoDashboard(shooterPID, "Shooter");
+    dashboard.PIDtoDashboard(turretPID, "Turret");
     dashboard.printElevatorStorage(elevator);
     dashboard.printTurretDegrees(turret);
-    dashboard.PIDtoDashboard(turretPID, "Turret");
-    limelight.updateLimelightTracking();
     dashboard.printLimelightData(limelight);
   }
 }
