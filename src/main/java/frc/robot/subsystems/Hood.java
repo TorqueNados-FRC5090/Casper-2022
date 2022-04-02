@@ -11,6 +11,8 @@ public class Hood {
     // Constructor
     public Hood(int motorID) {
         motor = new CANSparkMax(motorID, MotorType.kBrushless);
+        motor.restoreFactoryDefaults();
+        motor.setInverted(true);
     }
 
     // Accessors

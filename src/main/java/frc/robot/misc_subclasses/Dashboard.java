@@ -27,6 +27,10 @@ public class Dashboard {
         SmartDashboard.putNumber("TurretPos", turret.getPosition() / TURRET_RATIO);
     }
 
+    // Prints the current position of the hood in degrees
+    public void printHoodDegrees(Hood hood) {
+        SmartDashboard.putNumber("HoodPos", hood.getPosition() / HOOD_RATIO);
+    }
     // Prints the current position of a target relative to limelight
     public void printLimelightData(Limelight limelight) {
         SmartDashboard.putNumber("Distance from Target", limelight.getDistance());
