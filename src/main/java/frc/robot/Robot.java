@@ -155,7 +155,7 @@ public class Robot extends TimedRobot {
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
-    else if(joystick.getRawButton(2))
+    else if(joystick.getRawButton(4))
       intake.set(-1);
     else
       intake.motorOff();
@@ -248,9 +248,9 @@ public class Robot extends TimedRobot {
       intake.up();
 
     // joystick controls intake state
-    if(joystick.getRawButton(3))
+    if(joystick.getRawButton(2))
       intake.down();
-    else if (joystick.getRawButton(4))
+    else if (joystick.getRawButton(3))
       intake.up();
 
     // Start and back control the hood
