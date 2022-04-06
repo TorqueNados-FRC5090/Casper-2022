@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
-    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .2);
     turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
 
 
@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
 
     hood = new Hood(15);
     hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .25);
-    hoodPID.setInputRange(0, 15 * HOOD_RATIO);
+    hoodPID.setInputRange(0, 20 * HOOD_RATIO);
 
     elevator = new Elevator(13, 0, 1);
 
@@ -208,13 +208,24 @@ public class Robot extends TimedRobot {
         hoodPID.activate(10 * HOOD_RATIO);
       }
       else if(100 < limelight.getDistance() && limelight.getDistance() <= 120) {
-        hoodPID.activate(15 * HOOD_RATIO);
+        hoodPID.activate(25 * HOOD_RATIO);
       }
       
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate((.056918 * Math.pow(limelight.getDistance(), 2)) + (1.96339 * limelight.getDistance()) + (3022.7));
+      if(0 < limelight.getDistance() && limelight.getDistance() <= 60) {
+        shooterPID.activate(60 * limelight.getDistance());
+      }
+      else if(60 < limelight.getDistance() && limelight.getDistance() <= 80) {
+        shooterPID.activate(40 * limelight.getDistance());
+      }
+      else if(80 < limelight.getDistance() && limelight.getDistance() <= 100) {
+        shooterPID.activate(50 * limelight.getDistance());
+      }
+      else if(100 < limelight.getDistance() && limelight.getDistance() <= 120) {
+        shooterPID.activate(30 * limelight.getDistance());
+      }
     }
       
     // Left stick Y-axis controls left climber arm
