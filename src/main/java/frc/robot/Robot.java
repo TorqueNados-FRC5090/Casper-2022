@@ -198,34 +198,12 @@ public class Robot extends TimedRobot {
     
     
     if(xbox.getLeftTriggerAxis() > 0) {
-      if(0 < limelight.getDistance() && limelight.getDistance() <= 60) {
-        hoodPID.activate(1 * HOOD_RATIO);
-      }
-      else if(60 < limelight.getDistance() && limelight.getDistance() <= 80) {
-        hoodPID.activate(5 * HOOD_RATIO);
-      }
-      else if(80 < limelight.getDistance() && limelight.getDistance() <= 100) {
-        hoodPID.activate(10 * HOOD_RATIO);
-      }
-      else if(100 < limelight.getDistance() && limelight.getDistance() <= 120) {
-        hoodPID.activate(25 * HOOD_RATIO);
-      }
       
-      turretPID.activate(
-        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+      hoodPID.activate();
+      
+      turretPID.activate();
 
-      if(0 < limelight.getDistance() && limelight.getDistance() <= 60) {
-        shooterPID.activate(60 * limelight.getDistance());
-      }
-      else if(60 < limelight.getDistance() && limelight.getDistance() <= 80) {
-        shooterPID.activate(40 * limelight.getDistance());
-      }
-      else if(80 < limelight.getDistance() && limelight.getDistance() <= 100) {
-        shooterPID.activate(50 * limelight.getDistance());
-      }
-      else if(100 < limelight.getDistance() && limelight.getDistance() <= 120) {
-        shooterPID.activate(30 * limelight.getDistance());
-      }
+      shooterPID.activate();
     }
       
     // Left stick Y-axis controls left climber arm
