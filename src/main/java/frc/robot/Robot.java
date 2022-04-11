@@ -79,7 +79,7 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
-    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .2);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
     turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
 
 
