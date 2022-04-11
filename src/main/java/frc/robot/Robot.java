@@ -89,7 +89,7 @@ public class Robot extends TimedRobot {
 
     hood = new Hood(15);
     hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .25);
-    hoodPID.setInputRange(0, 20 * HOOD_RATIO);
+    hoodPID.setInputRange(0, 65);
 
     elevator = new Elevator(13, 0, 1);
 
@@ -199,11 +199,12 @@ public class Robot extends TimedRobot {
     
     if(xbox.getLeftTriggerAxis() > 0) {
       
-      hoodPID.activate();
+      hoodPID.activate((.000002 * Math.pow(limelight.getDistance(), 4)) + (.000655 * Math.pow(limelight.getDistance(), 3)) + (.060943 * Math.pow(limelight.getDistance(), 2)) + (1.23312 * limelight.getDistance()) + .962075);
       
-      turretPID.activate();
+      turretPID.activate(
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate();
+      shooterPID.activate(.05665 * Math.pow(limelight.getDistance(), 2) + 8.50119 * limelight.getDistance() + 2383.57);
     }
       
     // Left stick Y-axis controls left climber arm
@@ -232,12 +233,11 @@ public class Robot extends TimedRobot {
       intake.up();
 
     // Start and back control the hood
-    if(xbox.getStartButton())
-      hood.setPower(.1);
-    else if(xbox.getBackButton())
-      hood.setPower(-.1);
-    else
-      hood.setPower(0);
+    if(xbox.getStartButton()) {
+      hoodPID.activate(0);
+      turretPID.activate(0);
+      shooterPID.activate(0);
+    }
     
     // preset motor value to shoot ball
     if(xbox.getLeftStickButton()) {

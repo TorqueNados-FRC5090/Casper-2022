@@ -29,7 +29,7 @@ public class Dashboard {
 
     // Prints the current position of the hood in degrees
     public void printHoodDegrees(Hood hood) {
-        SmartDashboard.putNumber("HoodPos", hood.getPosition() / HOOD_RATIO);
+        SmartDashboard.putNumber("HoodPos", hood.getPosition());
     }
     // Prints the current position of a target relative to limelight
     public void printLimelightData(Limelight limelight) {
