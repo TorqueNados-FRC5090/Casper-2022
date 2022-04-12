@@ -154,7 +154,7 @@ public class Robot extends TimedRobot {
 
     if (currentTime > 7 && currentTime < 10) {
       hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
-      shooterPID.activate(.05665 * Math.pow(limelight.getDistance(), 2) + 8.50119 * limelight.getDistance() + 2383.57);
+      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
 
     if (currentTime > 8 && currentTime < 10) {
@@ -235,7 +235,7 @@ public class Robot extends TimedRobot {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate(.05665 * Math.pow(limelight.getDistance(), 2) + 8.50119 * limelight.getDistance() + 2383.57);
+      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
       
     // Left stick Y-axis controls left climber arm
