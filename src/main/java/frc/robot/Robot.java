@@ -61,6 +61,8 @@ public class Robot extends TimedRobot {
   private GenericPID turretPID;
   private GenericPID shooterPID;
   private GenericPID hoodPID;
+  private GenericPID leftclimberPID;
+  private GenericPID rightclimberPID;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -97,6 +99,10 @@ public class Robot extends TimedRobot {
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     climber = new Climber(11, 12, 2, 3);
+    leftclimberPID = new GenericPID(climber.getleftMotor(), ControlType.kPosition, .25);
+    leftclimberPID.setInputRange(0, 25); // need to test to get max
+    rightclimberPID = new GenericPID(climber.getrightMotor(), ControlType.kPosition, .25);
+    leftclimberPID.setInputRange(0, 25); // need to test to get max
 
     dashboard = new Dashboard();
   }
@@ -206,10 +212,12 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        elevator.set(.4);
+        leftclimberPID.activate();
+        rightclimberPID.activate();
         break;
       case 180: // DOWN
-        elevator.set(-.4);
+        leftclimberPID.activate(0);
+        rightclimberPID.activate(0);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -239,15 +247,20 @@ public class Robot extends TimedRobot {
     }
       
     // Left stick Y-axis controls left climber arm
-    if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE )
+    if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE ) {
       climber.setLeft(xbox.getLeftY());
-    else  
+      leftclimberPID.pause();
+    }
+    else if(leftclimberPID.getP() == 0)
       climber.leftOff();
+      
 
     // Right stick Y-axis controls left climber arm
-    if(Math.abs(xbox.getRightY()) > CLIMBER_DEADZONE )
+    if(Math.abs(xbox.getRightY()) > CLIMBER_DEADZONE ) {
       climber.setRight(xbox.getRightY());
-    else  
+      rightclimberPID.pause();
+    }
+    else if (leftclimberPID.getP() == 0)
       climber.rightOff();
 
     // X button lowers intake
