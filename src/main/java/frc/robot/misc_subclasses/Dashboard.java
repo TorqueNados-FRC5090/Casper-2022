@@ -31,6 +31,17 @@ public class Dashboard {
     public void printHoodDegrees(Hood hood) {
         SmartDashboard.putNumber("HoodPos", hood.getPosition());
     }
+
+    // Prints the current position of the left climber
+    public void printLeftClimberPosition(Climber leftMotor) {
+        SmartDashboard.putNumber("LeftClimbPos", leftMotor.getLeftClimberPosition());
+    }
+
+    // Prints the current position of the right climber
+    public void printRightClimberPosition(Climber rightMotor) {
+        SmartDashboard.putNumber("RightClimbPos", rightMotor.getRightClimberPosition());
+    }
+
     // Prints the current position of a target relative to limelight
     public void printLimelightData(Limelight limelight) {
         SmartDashboard.putNumber("Distance from Target", limelight.getDistance());

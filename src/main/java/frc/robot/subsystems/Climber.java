@@ -30,6 +30,8 @@ public class Climber {
     public double getRight() { return rightMotor.get(); }
     public CANSparkMax getleftMotor() { return leftMotor; }
     public CANSparkMax getrightMotor() { return leftMotor; }
+    public double getLeftClimberPosition() { return leftMotor.getEncoder().getPosition(); }
+    public double getRightClimberPosition() { return rightMotor.getEncoder().getPosition(); }
 
     // Set left arm's power
     public void setLeft(double pwr) { 
