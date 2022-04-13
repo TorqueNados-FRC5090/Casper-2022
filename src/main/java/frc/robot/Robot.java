@@ -321,6 +321,8 @@ public class Robot extends TimedRobot {
     dashboard.printElevatorStorage(elevator);
     dashboard.printTurretDegrees(turret);
     dashboard.printHoodDegrees(hood);
+    dashboard.printLeftClimberPosition(climber);
+    dashboard.printRightClimberPosition(climber);
     dashboard.printLimelightData(limelight);
   }
 }
