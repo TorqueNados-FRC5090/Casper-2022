@@ -100,9 +100,9 @@ public class Robot extends TimedRobot {
 
     climber = new Climber(11, 12, 2, 3);
     leftclimberPID = new GenericPID(climber.getleftMotor(), ControlType.kPosition, .25);
-    leftclimberPID.setInputRange(0, 25); // need to test to get max
+    leftclimberPID.setInputRange(-240, 0);
     rightclimberPID = new GenericPID(climber.getrightMotor(), ControlType.kPosition, .25);
-    leftclimberPID.setInputRange(0, 25); // need to test to get max
+    leftclimberPID.setInputRange(-240, 0);
 
     dashboard = new Dashboard();
   }
@@ -212,8 +212,8 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        leftclimberPID.activate();
-        rightclimberPID.activate();
+        leftclimberPID.activate(-236);
+        rightclimberPID.activate(-238);
         break;
       case 180: // DOWN
         leftclimberPID.activate(0);
