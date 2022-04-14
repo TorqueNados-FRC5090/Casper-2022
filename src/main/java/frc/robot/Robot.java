@@ -268,9 +268,9 @@ public class Robot extends TimedRobot {
       intake.up();
 
     // joystick controls intake state
-    if(joystick.getRawButton(4))
+    if(joystick.getRawButton(3))
       intake.down();
-    else if (joystick.getRawButton(3))
+    else if (joystick.getRawButton(4))
       intake.up();
 
     // Get ready to climb!
