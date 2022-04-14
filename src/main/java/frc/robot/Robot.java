@@ -118,21 +118,25 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
+    // drops intake
     if (currentTime > 0.01 && currentTime < 1.5) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
       intake.down();
     }
 
+    // starts intake
     if (currentTime > 1.5 && currentTime < 5.20) {
       intake.set(1);
     }
 
+    // drives forward
     if (currentTime > 1.5 && currentTime < 2.5) {
       drivetrain.getLeftMotorGroup().set(-0.4);
       drivetrain.getRightMotorGroup().set(0.4);
     }
 
+    // stops drive and intake, raises intake
     if (currentTime > 2.5 && currentTime < 5.20) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
@@ -140,31 +144,37 @@ public class Robot extends TimedRobot {
       intake.up();
     }
 
+    // rotates counterclockwise
     if (currentTime > 5.20 && currentTime < 6) {
-      drivetrain.getLeftMotorGroup().set(.4);
-      drivetrain.getRightMotorGroup().set(.4);
+      drivetrain.getLeftMotorGroup().set(.6);
+      drivetrain.getRightMotorGroup().set(.6);
     }
 
+    // stops rotation
     if (currentTime == 6) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
+    // aims turret
     if (currentTime > 6 && currentTime < 7) {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
     }
 
+    // aims hood and starts flywheel
     if (currentTime > 7 && currentTime < 10) {
       hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
 
-    if (currentTime > 9 && currentTime < 10) {
+    // shoots balls
+    if (currentTime > 10 && currentTime < 12) {
       elevator.shoot();
     }
 
-    if (currentTime == 11) {
+    // stops flywheel and elevator
+    if (currentTime == 12) {
       shooter.off();
       elevator.off(); 
     }
@@ -173,10 +183,12 @@ public class Robot extends TimedRobot {
   // This function is called once at the start of teleop
   @Override
   public void teleopInit() {
-    turretPID.setSetpoint(0);
     
+    // resets hood and turret
+    turretPID.setSetpoint(0);
     hoodPID.setSetpoint(0);
 
+    // auto compressor
     comp.enableDigital();
   }
 
