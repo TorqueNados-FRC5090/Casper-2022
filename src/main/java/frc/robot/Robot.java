@@ -118,57 +118,53 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
-    if (currentTime > 0.01 && currentTime < 1) {
+    if (currentTime > 0.01 && currentTime < 1.5) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
-    }
-
-    if (currentTime > 0.01 && currentTime < 1) {
       intake.down();
     }
 
-    if (currentTime > 1 && currentTime < 4.7) {
+    if (currentTime > 1.5 && currentTime < 5.20) {
       intake.set(1);
     }
 
-    if (currentTime > 1 && currentTime < 2.5) {
+    if (currentTime > 1.5 && currentTime < 2.5) {
       drivetrain.getLeftMotorGroup().set(-0.4);
       drivetrain.getRightMotorGroup().set(0.4);
     }
 
-    if (currentTime > 2.5 && currentTime < 4.7) {
+    if (currentTime > 2.5 && currentTime < 5.20) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
       intake.set(0);
       intake.up();
     }
 
-    if (currentTime > 4.7 && currentTime < 5.5) {
+    if (currentTime > 5.20 && currentTime < 6) {
       drivetrain.getLeftMotorGroup().set(.4);
       drivetrain.getRightMotorGroup().set(.4);
     }
 
-    if (currentTime == 5.5) {
+    if (currentTime == 6) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
-    if (currentTime > 5.5 && currentTime < 6)
-      drivetrain.getLeftMotorGroup().set(-0.4);
-      drivetrain.getRightMotorGroup().set(0.4);
-
     if (currentTime > 6 && currentTime < 7) {
-      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+    }
+
+    if (currentTime > 7 && currentTime < 10) {
+      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
 
-    if (currentTime > 9 && currentTime < 11) {
+    if (currentTime > 9 && currentTime < 10) {
       elevator.shoot();
     }
 
-    if (currentTime == 12) {
+    if (currentTime == 11) {
       shooter.off();
       elevator.off(); 
     }
@@ -193,7 +189,7 @@ public class Robot extends TimedRobot {
     // Joystick trigger activates motor
     if(joystick.getTrigger())
       intake.set(1);
-    else if(joystick.getRawButton(4))
+    else if(joystick.getRawButton(2))
       intake.set(-1);
     else
       intake.motorOff();
@@ -213,12 +209,12 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        leftclimberPID.activate(-236);
         rightclimberPID.activate(-238);
+        leftclimberPID.activate(-238);
         break;
       case 180: // DOWN
-        leftclimberPID.activate(0);
-        rightclimberPID.activate(0);
+        leftclimberPID.activate(-65);
+        rightclimberPID.activate(-65);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -249,8 +245,8 @@ public class Robot extends TimedRobot {
       
     // Left stick Y-axis controls left climber arm
     if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE ) {
-      climber.setLeft(xbox.getLeftY());
       leftclimberPID.pause();
+      climber.setLeft(xbox.getLeftY());
     }
     else if(leftclimberPID.getP() == 0)
       climber.leftOff();
@@ -258,8 +254,8 @@ public class Robot extends TimedRobot {
 
     // Right stick Y-axis controls left climber arm
     if(Math.abs(xbox.getRightY()) > CLIMBER_DEADZONE ) {
-      climber.setRight(xbox.getRightY());
       rightclimberPID.pause();
+      climber.setRight(xbox.getRightY());
     }
     else if (leftclimberPID.getP() == 0)
       climber.rightOff();
@@ -272,7 +268,7 @@ public class Robot extends TimedRobot {
       intake.up();
 
     // joystick controls intake state
-    if(joystick.getRawButton(2))
+    if(joystick.getRawButton(4))
       intake.down();
     else if (joystick.getRawButton(3))
       intake.up();
@@ -283,6 +279,8 @@ public class Robot extends TimedRobot {
       turretPID.activate(0);
       shooterPID.activate(0);
       intake.up();
+      leftclimberPID.activate(0);
+      rightclimberPID.activate(0);
     }
     
     // preset motor value to shoot ball

@@ -29,7 +29,7 @@ public class Climber {
     public double getLeft() { return leftMotor.get(); }
     public double getRight() { return rightMotor.get(); }
     public CANSparkMax getleftMotor() { return leftMotor; }
-    public CANSparkMax getrightMotor() { return leftMotor; }
+    public CANSparkMax getrightMotor() { return rightMotor; }
     public double getLeftClimberPosition() { return leftMotor.getEncoder().getPosition(); }
     public double getRightClimberPosition() { return rightMotor.getEncoder().getPosition(); }
 
