@@ -136,11 +136,15 @@ public class Robot extends TimedRobot {
       drivetrain.getRightMotorGroup().set(0.4);
     }
 
-    // stops drive and intake, raises intake
+    // stops drive and intake
     if (currentTime > 2.6 && currentTime < 4.9) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
       intake.set(0);
+    }
+
+    // intake up
+    if (currentTime > 3.5 && currentTime < 4.7) {
       intake.up();
     }
 
@@ -171,7 +175,7 @@ public class Robot extends TimedRobot {
     }
 
     // shoots balls
-    if (currentTime > 10 && currentTime < 12) {
+    if (currentTime > 10 && currentTime < 12  && limelight.hasTarget()) {
       elevator.shoot();
     }
 
