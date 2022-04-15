@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .25);
     hoodPID.setInputRange(0, 65);
 
-    elevator = new Elevator(13, 0, 1);
+    elevator = new Elevator(13, 1, 0);
 
     intake = new Intake(10);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
@@ -131,13 +131,13 @@ public class Robot extends TimedRobot {
     }
 
     // drives forward
-    if (currentTime > 1.5 && currentTime < 2.5) {
+    if (currentTime > 1.5 && currentTime < 2.6) {
       drivetrain.getLeftMotorGroup().set(-0.4);
       drivetrain.getRightMotorGroup().set(0.4);
     }
 
     // stops drive and intake, raises intake
-    if (currentTime > 2.5 && currentTime < 5.20) {
+    if (currentTime > 2.6 && currentTime < 4.9) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
       intake.set(0);
@@ -145,9 +145,11 @@ public class Robot extends TimedRobot {
     }
 
     // rotates counterclockwise
-    if (currentTime > 5.20 && currentTime < 6) {
-      drivetrain.getLeftMotorGroup().set(.6);
-      drivetrain.getRightMotorGroup().set(.6);
+    if (currentTime > 4.9 && currentTime < 6) {
+      drivetrain.getLeftMotorGroup().set(.4);
+      drivetrain.getRightMotorGroup().set(.4);
+      turretPID.activate(
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
     }
 
     // stops rotation
