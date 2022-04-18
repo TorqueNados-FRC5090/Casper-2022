@@ -136,20 +136,17 @@ public class Robot extends TimedRobot {
       drivetrain.getRightMotorGroup().set(0);
     }
 
-    // turret
-    if (currentTime > 4.9 && currentTime < 6) {
+    // aims hood and starts flywheel and aims turret
+    if (currentTime > 5 && currentTime < 7.5) {
+      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
-    }
-
-    // aims hood and starts flywheel
-    if (currentTime > 6 && currentTime < 10) {
-      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
 
     // shoots balls
-    if (currentTime > 10 && currentTime < 12) {
+    if (currentTime > 7.5 && currentTime < 12) {
+      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
       elevator.shoot();
     }
 
