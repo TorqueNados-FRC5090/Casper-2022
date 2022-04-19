@@ -60,6 +60,9 @@ public class Robot extends TimedRobot {
   private Compressor comp;
   private GenericPID turretPID;
   private GenericPID shooterPID;
+  private GenericPID hoodPID;
+  private GenericPID leftclimberPID;
+  private GenericPID rightclimberPID;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -79,23 +82,29 @@ public class Robot extends TimedRobot {
 
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
+    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+
 
     shooter = new Shooter(9, 5);    
     shooterPID = new GenericPID(shooter.getLeaderMotor(), ControlType.kVelocity, .00022, .0000005, 0);
     shooterPID.setOutputRange(-1,1);
 
     hood = new Hood(15);
+    hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .25);
+    hoodPID.setInputRange(0, 65);
 
-    elevator = new Elevator(13, 0, 1);
+    elevator = new Elevator(13, 1, 0);
 
     intake = new Intake(10);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     climber = new Climber(11, 12, 2, 3);
+    leftclimberPID = new GenericPID(climber.getleftMotor(), ControlType.kPosition, .25);
+    leftclimberPID.setInputRange(-240, 0);
+    rightclimberPID = new GenericPID(climber.getrightMotor(), ControlType.kPosition, .25);
+    leftclimberPID.setInputRange(-240, 0);
 
     dashboard = new Dashboard();
-
-
   }
 
   // This function is called once at the start of auton
@@ -109,37 +118,53 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
-    if((currentTime > 2) && currentTime < 10)
-     shooterPID.activate(3050);
-
-    if(currentTime > 5 && currentTime < 10) {
-      elevator.set(1);
-    }
-
-    if(currentTime > 10 && currentTime < 11.5) {
-      drivetrain.getLeftMotorGroup().set(0.35);
-      drivetrain.getRightMotorGroup().set(-0.35);
-      elevator.off();
-      shooterPID.pause();
-    } 
-
-    if(currentTime > 11.5) {
+    // drops intake
+    if (currentTime > 0.01 && currentTime < 1.5) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
-    if(currentTime > 12)
-    intake.down();
+    // drives backwards
+    if (currentTime > 1.5 && currentTime < 2.6) {
+      drivetrain.getLeftMotorGroup().set(0.4);
+      drivetrain.getRightMotorGroup().set(-0.4);
+    }
 
+    // stops drive
+    if (currentTime > 2.6 && currentTime < 4.9) {
+      drivetrain.getLeftMotorGroup().set(0);
+      drivetrain.getRightMotorGroup().set(0);
+    }
+
+    // aims hood and starts flywheel and aims turret
+    if (currentTime > 5 && currentTime < 7.5) {
+      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
+      turretPID.activate(
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
+    }
+
+    // shoots balls
+    if (currentTime > 7.5 && currentTime < 12) {
+      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
+      elevator.shoot();
+    }
+
+    // stops elevator
+    if (currentTime == 12) {
+      elevator.off(); 
+    }
   }
   
   // This function is called once at the start of teleop
   @Override
   public void teleopInit() {
-
-    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    
+    // resets hood and turret
     turretPID.setSetpoint(0);
+    hoodPID.setSetpoint(0);
 
+    // auto compressor
     comp.enableDigital();
   }
 
@@ -160,11 +185,11 @@ public class Robot extends TimedRobot {
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper()) {
       turretPID.pause();
-      turret.setPower(.3);
+      turret.setPower(.8);
     }
     else if(xbox.getRightBumper()) {
       turretPID.pause();
-      turret.setPower(-.3);
+      turret.setPower(-.8);
     }
     else if(turretPID.getP() == 0)
       turret.off();
@@ -172,10 +197,12 @@ public class Robot extends TimedRobot {
     // Dpad controls
     switch(xbox.getPOV()){
       case 0: // UP
-        elevator.set(.4);
+        rightclimberPID.activate(-238);
+        leftclimberPID.activate(-238);
         break;
       case 180: // DOWN
-        elevator.set(-.4);
+        leftclimberPID.activate(-65);
+        rightclimberPID.activate(-65);
         break;
       case 90: // RIGHT
         shooter.increasePowerBy(.004);
@@ -192,24 +219,33 @@ public class Robot extends TimedRobot {
         else
           elevator.auto();
     }
-
+    
+    
     if(xbox.getLeftTriggerAxis() > 0) {
+      
+      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
+      
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
 
-      shooterPID.activate((.056918 * Math.pow(limelight.getDistance(), 2)) + (1.96339 * limelight.getDistance()) + (3022.7));
+      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
       
     // Left stick Y-axis controls left climber arm
-    if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE )
+    if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE ) {
+      leftclimberPID.pause();
       climber.setLeft(xbox.getLeftY());
-    else  
+    }
+    else if(leftclimberPID.getP() == 0)
       climber.leftOff();
+      
 
     // Right stick Y-axis controls left climber arm
-    if(Math.abs(xbox.getRightY()) > CLIMBER_DEADZONE )
+    if(Math.abs(xbox.getRightY()) > CLIMBER_DEADZONE ) {
+      rightclimberPID.pause();
       climber.setRight(xbox.getRightY());
-    else  
+    }
+    else if (leftclimberPID.getP() == 0)
       climber.rightOff();
 
     // X button lowers intake
@@ -225,13 +261,15 @@ public class Robot extends TimedRobot {
     else if (joystick.getRawButton(4))
       intake.up();
 
-    // Start and back control the hood
-    if(xbox.getStartButton())
-      hood.setPower(-.1);
-    else if(xbox.getBackButton())
-      hood.setPower(.1);
-    else
-      hood.setPower(0);
+    // Get ready to climb!
+    if(xbox.getStartButton()) {
+      hoodPID.activate(0);
+      turretPID.activate(0);
+      shooterPID.activate(0);
+      intake.up();
+      leftclimberPID.activate(0);
+      rightclimberPID.activate(0);
+    }
     
     // preset motor value to shoot ball
     if(xbox.getLeftStickButton()) {
@@ -266,8 +304,12 @@ public class Robot extends TimedRobot {
     // Update dashboard
     dashboard.PIDtoDashboard(shooterPID, "Shooter");
     dashboard.PIDtoDashboard(turretPID, "Turret");
+    dashboard.PIDtoDashboard(hoodPID, "Hood");
     dashboard.printElevatorStorage(elevator);
     dashboard.printTurretDegrees(turret);
+    dashboard.printHoodDegrees(hood);
+    dashboard.printLeftClimberPosition(climber);
+    dashboard.printRightClimberPosition(climber);
     dashboard.printLimelightData(limelight);
   }
 }

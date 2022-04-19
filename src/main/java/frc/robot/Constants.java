@@ -16,6 +16,9 @@ public final class Constants {
     // How many times the turret's motor needs to rotate to turn the turret 1 degree
     public static final double TURRET_RATIO = 2.3737373737;
 
+    // 1 motor rotation to one hood degree
+    public static final double HOOD_RATIO = 3.2638888888;
+
     // Climber deadzone used to combat stick-drift
     public static final double CLIMBER_DEADZONE = .1;
 
