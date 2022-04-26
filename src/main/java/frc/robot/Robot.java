@@ -81,7 +81,7 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
-    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .035);
     turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
 
 
@@ -185,11 +185,11 @@ public class Robot extends TimedRobot {
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper()) {
       turretPID.pause();
-      turret.setPower(.8);
+      turret.setPower(.3);
     }
     else if(xbox.getRightBumper()) {
       turretPID.pause();
-      turret.setPower(-.8);
+      turret.setPower(-.3);
     }
     else if(turretPID.getP() == 0)
       turret.off();
@@ -296,6 +296,29 @@ public class Robot extends TimedRobot {
   // This function is called every 20ms while the robot is enabled
   @Override
   public void robotPeriodic() {
+     
+    int TRL = 0;
+
+    if (limelight.hasValidTarget == false && TRL == 0) {
+      turretPID.activate(50 * TURRET_RATIO);
+    }
+      
+    else if (limelight.hasValidTarget == false && turret.getPosition() > 49) {
+      turretPID.activate(-50 * TURRET_RATIO);
+      TRL = 1;
+    }
+
+    else if (limelight.hasValidTarget == false && turret.getPosition() < -49) {
+      TRL = 0;
+    }
+  
+    else {
+      turretPID.activate(
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+    }
+
+
+    
     // Update subclass internal values
     shooter.updateCurrentPower();
     elevator.update();
