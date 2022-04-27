@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.GenericPID;
 import com.revrobotics.CANSparkMax.ControlType;
 
@@ -54,11 +55,13 @@ public class Robot extends TimedRobot {
   private Climber climber;
   private Turret turret;
   private Hood hood;
+  public int TRL;
 
   // Misc variables/objects
   private DifferentialDrive robotDrive;
   private Compressor comp;
   private GenericPID turretPID;
+  private GenericPID searchPID;
   private GenericPID shooterPID;
   private GenericPID hoodPID;
   private GenericPID leftclimberPID;
@@ -81,9 +84,11 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
-    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .035);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .04);
     turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
 
+    searchPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .01);
+    searchPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
 
     shooter = new Shooter(9, 5);    
     shooterPID = new GenericPID(shooter.getLeaderMotor(), ControlType.kVelocity, .00022, .0000005, 0);
@@ -105,6 +110,8 @@ public class Robot extends TimedRobot {
     leftclimberPID.setInputRange(-240, 0);
 
     dashboard = new Dashboard();
+
+    TRL = 0;
   }
 
   // This function is called once at the start of auton
@@ -225,8 +232,24 @@ public class Robot extends TimedRobot {
       
       hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       
-      turretPID.activate(
-        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+      if (limelight.hasValidTarget == false && TRL == 0) {
+        searchPID.activate(70 * TURRET_RATIO);
+        TRL = 1;
+      }
+        
+      else if (limelight.hasValidTarget == false && turret.getPosition() > 28 && TRL == 1) {
+        searchPID.activate(-70 * TURRET_RATIO);
+      }
+  
+      else if (limelight.hasValidTarget == false && turret.getPosition() < -28) {
+        TRL = 0;
+      }
+    
+      else if (limelight.hasValidTarget == true) {
+        turretPID.activate(
+          ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+        TRL = 0;
+      }
 
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
@@ -296,26 +319,9 @@ public class Robot extends TimedRobot {
   // This function is called every 20ms while the robot is enabled
   @Override
   public void robotPeriodic() {
-     
-    int TRL = 0;
 
-    if (limelight.hasValidTarget == false && TRL == 0) {
-      turretPID.activate(50 * TURRET_RATIO);
-    }
-      
-    else if (limelight.hasValidTarget == false && turret.getPosition() > 49) {
-      turretPID.activate(-50 * TURRET_RATIO);
-      TRL = 1;
-    }
-
-    else if (limelight.hasValidTarget == false && turret.getPosition() < -49) {
-      TRL = 0;
-    }
-  
-    else {
-      turretPID.activate(
-        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
-    }
+    
+    
 
 
     
@@ -334,5 +340,6 @@ public class Robot extends TimedRobot {
     dashboard.printLeftClimberPosition(climber);
     dashboard.printRightClimberPosition(climber);
     dashboard.printLimelightData(limelight);
+    SmartDashboard.putNumber("TLR", TRL);
   }
 }
