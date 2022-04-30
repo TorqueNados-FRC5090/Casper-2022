@@ -85,10 +85,10 @@ public class Robot extends TimedRobot {
 
     turret = new Turret(14);
     turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .04);
-    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    turretPID.setInputRange(-94 * TURRET_RATIO, 94 * TURRET_RATIO);
 
     searchPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .01);
-    searchPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    searchPID.setInputRange(-94 * TURRET_RATIO, 94 * TURRET_RATIO);
 
     shooter = new Shooter(9, 5);    
     shooterPID = new GenericPID(shooter.getLeaderMotor(), ControlType.kVelocity, .00022, .0000005, 0);
