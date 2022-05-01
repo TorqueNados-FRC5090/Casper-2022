@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.GenericPID;
 import com.revrobotics.CANSparkMax.ControlType;
 
@@ -320,11 +319,6 @@ public class Robot extends TimedRobot {
   @Override
   public void robotPeriodic() {
 
-    
-    
-
-
-    
     // Update subclass internal values
     shooter.updateCurrentPower();
     elevator.update();
@@ -340,6 +334,5 @@ public class Robot extends TimedRobot {
     dashboard.printLeftClimberPosition(climber);
     dashboard.printRightClimberPosition(climber);
     dashboard.printLimelightData(limelight);
-    SmartDashboard.putNumber("TLR", TRL);
   }
 }
