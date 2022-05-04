@@ -14,7 +14,7 @@ package frc.robot;
  */
 public final class Constants {
     // How many times the turret's motor needs to rotate to turn the turret 1 degree
-    public static final double TURRET_RATIO = 2.3737373737;
+    public static final double TURRET_RATIO = .4747474747;
 
     // 1 motor rotation to one hood degree
     public static final double HOOD_RATIO = 3.2638888888;

@@ -54,11 +54,13 @@ public class Robot extends TimedRobot {
   private Climber climber;
   private Turret turret;
   private Hood hood;
+  public boolean TRL;
 
   // Misc variables/objects
   private DifferentialDrive robotDrive;
   private Compressor comp;
   private GenericPID turretPID;
+  private GenericPID searchPID;
   private GenericPID shooterPID;
   private GenericPID hoodPID;
   private GenericPID leftclimberPID;
@@ -81,9 +83,11 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
-    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
-    turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .04);
+    turretPID.setInputRange(-94 * TURRET_RATIO, 94 * TURRET_RATIO);
 
+    searchPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .01);
+    searchPID.setInputRange(-94 * TURRET_RATIO, 94 * TURRET_RATIO);
 
     shooter = new Shooter(9, 5);    
     shooterPID = new GenericPID(shooter.getLeaderMotor(), ControlType.kVelocity, .00022, .0000005, 0);
@@ -105,6 +109,8 @@ public class Robot extends TimedRobot {
     leftclimberPID.setInputRange(-240, 0);
 
     dashboard = new Dashboard();
+
+    TRL = false;
   }
 
   // This function is called once at the start of auton
@@ -185,11 +191,11 @@ public class Robot extends TimedRobot {
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper()) {
       turretPID.pause();
-      turret.setPower(.8);
+      turret.setPower(.3);
     }
     else if(xbox.getRightBumper()) {
       turretPID.pause();
-      turret.setPower(-.8);
+      turret.setPower(-.3);
     }
     else if(turretPID.getP() == 0)
       turret.off();
@@ -220,14 +226,33 @@ public class Robot extends TimedRobot {
           elevator.auto();
     }
     
-    
     if(xbox.getLeftTriggerAxis() > 0) {
       
+      // Hood quartic regression; function of limelight distance that outputs position
       hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       
-      turretPID.activate(
-        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+      // When limelight does not have a target, the turret will constinuously travel to left and right extrema
+      // until limelight does have a target, in which the turret will focus on the target
+      if (!(limelight.hasValidTarget) && !(TRL)) {
+        searchPID.activate(70 * TURRET_RATIO);
+        TRL = true;
+      }
+        
+      else if (!(limelight.hasValidTarget) && turret.getPosition() > 28 && TRL) {
+        searchPID.activate(-70 * TURRET_RATIO);
+      }
+  
+      else if (!(limelight.hasValidTarget) && turret.getPosition() < -28) {
+        TRL = false;
+      }
+    
+      else if (limelight.hasValidTarget) {
+        turretPID.activate(
+          ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+        TRL = false;
+      }
 
+      // Flywheel quadratic regression; function of limelight distance that outputs velocity
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
       
@@ -296,6 +321,7 @@ public class Robot extends TimedRobot {
   // This function is called every 20ms while the robot is enabled
   @Override
   public void robotPeriodic() {
+
     // Update subclass internal values
     shooter.updateCurrentPower();
     elevator.update();
